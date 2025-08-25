@@ -1,12 +1,16 @@
 services:
   - type: web
-    name: startup-hub-frontend
+    name: startlinker-frontend
     env: static
-    plan: starter
-    buildCommand: npm install && npm run build
+    plan: free
+    buildCommand: npm ci && npm run build
     staticPublishPath: ./build
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
     envVars:
+      - key: NODE_VERSION
+        value: "18"
       - key: REACT_APP_API_URL
-        value: https://startup-hub-backend.onrender.com
-      - key: REACT_APP_BACKEND_URL
-        value: https://startup-hub-backend.onrender.com
+        value: https://startlinker-backend.onrender.com
