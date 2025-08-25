@@ -28,7 +28,7 @@ const getMediaUrl = (url) => {
     }
     
     // Otherwise, prepend the backend URL
-    const baseURL = 'http://13.50.234.250';
+    const baseURL = process.env.REACT_APP_API_URL || 'https://startlinker-backend.onrender.com';
     
     // Ensure proper URL construction
     if (url.startsWith('/')) {

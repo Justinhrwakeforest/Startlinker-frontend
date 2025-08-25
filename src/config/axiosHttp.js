@@ -1,9 +1,10 @@
 // Force HTTP axios instance for development
 import axios from 'axios';
+import { API_CONFIG } from './api.config';
 
 // Create a new axios instance specifically for HTTP
 const httpAxios = axios.create({
-  baseURL: 'http://13.50.234.250',
+  baseURL: API_CONFIG.baseURL,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
