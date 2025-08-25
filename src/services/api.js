@@ -29,11 +29,11 @@ console.log('🔧 Window hostname:', window.location.hostname);
 // Combined request interceptor - add auth token and fix URLs
 api.interceptors.request.use(
   (config) => {
-    // Only force HTTP for direct IP access, allow HTTPS for domain
-    if (config.baseURL && (config.baseURL.includes('13.50.234.250') || config.baseURL.includes('44.219.216.107'))) {
+    // Only force HTTP for direct IP access, not for Render domains
+    if (config.baseURL && (config.baseURL.includes('13.50.234.250') || config.baseURL.includes('44.219.216.107') || config.baseURL.includes('51.21.246.24'))) {
       config.baseURL = config.baseURL.replace('https://', 'http://');
     }
-    if (config.url && (config.url.includes('13.50.234.250') || config.url.includes('44.219.216.107'))) {
+    if (config.url && (config.url.includes('13.50.234.250') || config.url.includes('44.219.216.107') || config.url.includes('51.21.246.24'))) {
       config.url = config.url.replace('https://', 'http://');
     }
     

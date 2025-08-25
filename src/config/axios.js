@@ -53,13 +53,13 @@ axios.interceptors.request.use(
       config.headers['Content-Type'] = 'application/json';
     }
     
-    // Force HTTP for localhost development
-    if (config.baseURL) {
+    // Only force HTTP for localhost development or direct IP access
+    if (config.baseURL && (config.baseURL.includes('localhost') || config.baseURL.includes('127.0.0.1') || config.baseURL.includes('13.50.234.250') || config.baseURL.includes('44.219.216.107') || config.baseURL.includes('51.21.246.24'))) {
       config.baseURL = config.baseURL.replace('https://', 'http://');
     }
     
-    // Ensure we're always making HTTP requests
-    if (config.url) {
+    // Only force HTTP for localhost or direct IP URLs
+    if (config.url && (config.url.includes('localhost') || config.url.includes('127.0.0.1') || config.url.includes('13.50.234.250') || config.url.includes('44.219.216.107') || config.url.includes('51.21.246.24'))) {
       config.url = config.url.replace('https://', 'http://');
     }
     
