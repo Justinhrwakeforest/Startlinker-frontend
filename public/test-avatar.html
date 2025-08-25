@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avatar Initials Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 10px;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .test-case {
+            text-align: center;
+            padding: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .name {
+            font-weight: 600;
+            color: #333;
+            margin: 5px 0;
+        }
+        .initials {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .generated-url {
+            font-size: 11px;
+            color: #9ca3af;
+            word-break: break-all;
+            margin-top: 5px;
+            padding: 5px;
+            background: white;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Avatar Initials Test - First Name Only</h1>
+        <p>This page demonstrates how avatars are generated using only the first letter or first two letters from the first name.</p>
+        
+        <div class="test-grid" id="testGrid"></div>
+    </div>
+
+    <script>
+        // Simulate the getFirstNameInitials function
+        function getFirstNameInitials(user) {
+            let firstName = user?.first_name || '';
+            
+            if (!firstName && user?.display_name) {
+                firstName = user.display_name.split(' ')[0];
+            } else if (!firstName && user?.username) {
+                firstName = user.username;
+            }
+            
+            firstName = firstName.trim();
+            
+            if (!firstName) {
+                return 'U';
+            }
+            
+            return firstName.slice(0, 2).toUpperCase();
+        }
+
+        // Simulate the getAvatarUrl function
+        function getAvatarUrl(user, size = 48) {
+            const initials = getFirstNameInitials(user);
+            
+            const colors = [
+                '3b82f6', '8b5cf6', 'ef4444', '10b981', 'f59e0b',
+                '06b6d4', 'ec4899', '84cc16', 'f97316', '6366f1'
+            ];
+            
+            const nameForColor = user?.first_name || user?.display_name || user?.username || 'User';
+            const colorIndex = nameForColor.length % colors.length;
+            const backgroundColor = colors[colorIndex];
+            
+            return `https://ui-avatars.com/?name=${encodeURIComponent(initials)}&background=${backgroundColor}&color=fff&size=${size}&bold=true`;
+        }
+
+        // Test cases
+        const testUsers = [
+            { first_name: 'John', last_name: 'Doe' },
+            { first_name: 'Alice', last_name: 'Smith' },
+            { first_name: 'Bob' },
+            { first_name: 'Charlie', last_name: 'Brown' },
+            { first_name: 'Diana' },
+            { first_name: 'E', last_name: 'Einstein' },
+            { first_name: 'Frank', last_name: 'Wilson' },
+            { first_name: 'Grace', last_name: 'Lee' },
+            { first_name: 'Henry' },
+            { first_name: 'Isabel', last_name: 'Martinez' },
+            { display_name: 'Jack Robinson' },
+            { display_name: 'Kate Williams' },
+            { username: 'liam123' },
+            { username: 'mia_user' },
+            { first_name: 'N' },
+            { first_name: 'Olivia', last_name: 'Taylor' },
+            { first_name: 'Peter', last_name: 'Parker' },
+            { first_name: 'Quinn' },
+            { first_name: 'Robert', last_name: 'Johnson' },
+            { first_name: 'Sophia', last_name: 'Anderson' },
+            { first_name: 'Thomas' },
+            { first_name: 'Uma', last_name: 'Thurman' },
+            { first_name: 'Victor', last_name: 'Hugo' },
+            { first_name: 'Wendy' },
+            { first_name: 'Xavier', last_name: 'Charles' },
+            { first_name: 'Yuki' },
+            { first_name: 'Zara', last_name: 'Phillips' },
+            {} // Empty user - should show 'U'
+        ];
+
+        // Generate test grid
+        const grid = document.getElementById('testGrid');
+        
+        testUsers.forEach(user => {
+            const initials = getFirstNameInitials(user);
+            const avatarUrl = getAvatarUrl(user, 80);
+            
+            const displayName = user.first_name 
+                ? (user.last_name ? `${user.first_name} ${user.last_name}` : user.first_name)
+                : user.display_name || user.username || 'No Name';
+            
+            const testCase = document.createElement('div');
+            testCase.className = 'test-case';
+            testCase.innerHTML = `
+                <img src="${avatarUrl}" alt="${displayName}" class="avatar">
+                <div class="name">${displayName}</div>
+                <div class="initials">Initials: "${initials}"</div>
+                <div class="generated-url">First Name: ${user.first_name || 'N/A'}</div>
+            `;
+            
+            grid.appendChild(testCase);
+        });
+    </script>
+</body>
+</html>

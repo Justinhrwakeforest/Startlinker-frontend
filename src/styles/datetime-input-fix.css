@@ -1,0 +1,135 @@
+/* Input Visibility Fix - For datetime inputs and textareas */
+
+/* Force light color scheme for datetime inputs */
+input[type="datetime-local"] {
+  color-scheme: light;
+  -webkit-color-scheme: light;
+}
+
+/* Ensure text is visible in webkit browsers */
+input[type="datetime-local"]::-webkit-datetime-edit {
+  color: #111827 !important;
+  background-color: transparent !important;
+}
+
+input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper {
+  color: #111827 !important;
+  background-color: transparent !important;
+}
+
+input[type="datetime-local"]::-webkit-datetime-edit-text {
+  color: #111827 !important;
+  background-color: transparent !important;
+}
+
+input[type="datetime-local"]::-webkit-datetime-edit-month-field,
+input[type="datetime-local"]::-webkit-datetime-edit-day-field,
+input[type="datetime-local"]::-webkit-datetime-edit-year-field,
+input[type="datetime-local"]::-webkit-datetime-edit-hour-field,
+input[type="datetime-local"]::-webkit-datetime-edit-minute-field,
+input[type="datetime-local"]::-webkit-datetime-edit-second-field,
+input[type="datetime-local"]::-webkit-datetime-edit-millisecond-field,
+input[type="datetime-local"]::-webkit-datetime-edit-meridiem-field {
+  color: #111827 !important;
+  background-color: transparent !important;
+}
+
+/* Fix for Firefox */
+input[type="datetime-local"] {
+  color: #111827 !important;
+  background-color: #ffffff !important;
+}
+
+/* Ensure placeholder text is visible but distinguishable */
+input[type="datetime-local"]::-webkit-datetime-edit-text {
+  color: #6b7280 !important;
+}
+
+/* When focused, ensure text is dark */
+input[type="datetime-local"]:focus {
+  color: #111827 !important;
+}
+
+/* Custom styling for better visibility */
+.datetime-input-custom {
+  color: #111827 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
+}
+
+.datetime-input-custom:focus {
+  outline: none !important;
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2) !important;
+}
+
+/* Dark mode override - force light colors */
+@media (prefers-color-scheme: dark) {
+  input[type="datetime-local"] {
+    color-scheme: light !important;
+    -webkit-color-scheme: light !important;
+    color: #111827 !important;
+    background-color: #ffffff !important;
+  }
+  
+  input[type="datetime-local"]::-webkit-datetime-edit,
+  input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper,
+  input[type="datetime-local"]::-webkit-datetime-edit-text,
+  input[type="datetime-local"]::-webkit-datetime-edit-month-field,
+  input[type="datetime-local"]::-webkit-datetime-edit-day-field,
+  input[type="datetime-local"]::-webkit-datetime-edit-year-field,
+  input[type="datetime-local"]::-webkit-datetime-edit-hour-field,
+  input[type="datetime-local"]::-webkit-datetime-edit-minute-field,
+  input[type="datetime-local"]::-webkit-datetime-edit-second-field,
+  input[type="datetime-local"]::-webkit-datetime-edit-millisecond-field,
+  input[type="datetime-local"]::-webkit-datetime-edit-meridiem-field {
+    color: #111827 !important;
+    background-color: #ffffff !important;
+  }
+}
+
+/* Textarea visibility fix */
+textarea {
+  color: #111827 !important;
+  background-color: #ffffff !important;
+}
+
+textarea:focus {
+  color: #111827 !important;
+  background-color: #ffffff !important;
+}
+
+/* Input text visibility fix */
+input[type="text"] {
+  color: #111827 !important;
+  background-color: #ffffff !important;
+}
+
+input[type="text"]:focus {
+  color: #111827 !important;
+  background-color: #ffffff !important;
+}
+
+/* Ensure placeholder text is visible but distinguishable */
+textarea::placeholder,
+input[type="text"]::placeholder {
+  color: #6b7280 !important;
+}
+
+/* Dark mode override for all inputs and textareas */
+@media (prefers-color-scheme: dark) {
+  textarea,
+  input[type="text"] {
+    color: #111827 !important;
+    background-color: #ffffff !important;
+  }
+  
+  textarea::placeholder,
+  input[type="text"]::placeholder {
+    color: #6b7280 !important;
+  }
+}

@@ -1,0 +1,405 @@
+/* Achievement Animations CSS */
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) skewX(-12deg); }
+  100% { transform: translateX(200%) skewX(-12deg); }
+}
+
+@keyframes float-1 {
+  0%, 100% { 
+    transform: translateY(0px) translateX(0px); 
+    opacity: 0.7; 
+  }
+  25% { 
+    transform: translateY(-10px) translateX(5px); 
+    opacity: 1; 
+  }
+  50% { 
+    transform: translateY(-5px) translateX(-5px); 
+    opacity: 0.8; 
+  }
+  75% { 
+    transform: translateY(-8px) translateX(3px); 
+    opacity: 0.9; 
+  }
+}
+
+@keyframes float-2 {
+  0%, 100% { 
+    transform: translateY(0px) translateX(0px); 
+    opacity: 0.7; 
+  }
+  33% { 
+    transform: translateY(-12px) translateX(-8px); 
+    opacity: 1; 
+  }
+  66% { 
+    transform: translateY(-3px) translateX(8px); 
+    opacity: 0.8; 
+  }
+}
+
+@keyframes float-3 {
+  0%, 100% { 
+    transform: translateY(0px) translateX(0px); 
+    opacity: 0.7; 
+  }
+  40% { 
+    transform: translateY(-8px) translateX(-3px); 
+    opacity: 0.9; 
+  }
+  80% { 
+    transform: translateY(-15px) translateX(6px); 
+    opacity: 1; 
+  }
+}
+
+@keyframes sparkle-rotate {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 5px currentColor; 
+    opacity: 0.7; 
+  }
+  50% { 
+    box-shadow: 0 0 20px currentColor, 0 0 30px currentColor; 
+    opacity: 1; 
+  }
+}
+
+@keyframes legendary-aura {
+  0%, 100% { 
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+    transform: scale(1);
+  }
+  50% { 
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.6) 0%, transparent 70%);
+    transform: scale(1.05);
+  }
+}
+
+/* Category-specific animations */
+@keyframes rocket-launch {
+  0% { transform: translateY(0) rotate(0deg) scale(1); }
+  25% { transform: translateY(-5px) rotate(-5deg) scale(1.05); }
+  50% { transform: translateY(-10px) rotate(5deg) scale(1.1); }
+  75% { transform: translateY(-5px) rotate(-2deg) scale(1.05); }
+  100% { transform: translateY(0) rotate(0deg) scale(1); }
+}
+
+@keyframes social-glow {
+  0%, 100% { 
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.8), 0 0 30px rgba(59, 130, 246, 0.4);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes content-wave {
+  0%, 100% { 
+    transform: rotate(0deg) scale(1);
+    filter: hue-rotate(0deg);
+  }
+  25% { 
+    transform: rotate(5deg) scale(1.05);
+    filter: hue-rotate(15deg);
+  }
+  50% { 
+    transform: rotate(-5deg) scale(1.1);
+    filter: hue-rotate(30deg);
+  }
+  75% { 
+    transform: rotate(3deg) scale(1.05);
+    filter: hue-rotate(15deg);
+  }
+}
+
+@keyframes community-help {
+  0%, 100% { 
+    transform: scale(1) rotate(0deg);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  }
+  50% { 
+    transform: scale(1.1) rotate(180deg);
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes special-magic {
+  0%, 100% { 
+    transform: rotate(0deg) scale(1);
+    filter: brightness(1) hue-rotate(0deg);
+  }
+  25% { 
+    transform: rotate(90deg) scale(1.1);
+    filter: brightness(1.2) hue-rotate(90deg);
+  }
+  50% { 
+    transform: rotate(180deg) scale(1.2);
+    filter: brightness(1.4) hue-rotate(180deg);
+  }
+  75% { 
+    transform: rotate(270deg) scale(1.1);
+    filter: brightness(1.2) hue-rotate(270deg);
+  }
+}
+
+@keyframes startup-innovation {
+  0% { transform: rotate(0deg) scale(1); opacity: 1; }
+  25% { transform: rotate(90deg) scale(1.1); opacity: 0.8; }
+  50% { transform: rotate(180deg) scale(1.2); opacity: 0.9; }
+  75% { transform: rotate(270deg) scale(1.1); opacity: 0.8; }
+  100% { transform: rotate(360deg) scale(1); opacity: 1; }
+}
+
+@keyframes profile-complete {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+  }
+  50% { 
+    transform: scale(1.15);
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+  }
+}
+
+@keyframes epic-pulse {
+  0%, 100% { 
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 70%);
+  }
+  50% { 
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, transparent 70%);
+  }
+}
+
+@keyframes rare-sparkle {
+  0%, 100% { 
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% { 
+    transform: scale(1) rotate(180deg);
+    opacity: 1;
+  }
+}
+
+@keyframes achievement-earn {
+  0% { 
+    transform: scale(0) rotate(-180deg);
+    opacity: 0;
+  }
+  50% { 
+    transform: scale(1.2) rotate(0deg);
+    opacity: 1;
+  }
+  100% { 
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0.3) rotate(-180deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05) rotate(0deg);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(0.9) rotate(0deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Utility Classes */
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+.animate-float-1 {
+  animation: float-1 3s ease-in-out infinite;
+}
+
+.animate-float-2 {
+  animation: float-2 2.5s ease-in-out infinite 0.5s;
+}
+
+.animate-float-3 {
+  animation: float-3 4s ease-in-out infinite 1s;
+}
+
+.animate-sparkle-rotate {
+  animation: sparkle-rotate 2s linear infinite;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.animate-legendary-aura {
+  animation: legendary-aura 3s ease-in-out infinite;
+}
+
+.animate-epic-pulse {
+  animation: epic-pulse 2s ease-in-out infinite;
+}
+
+.animate-rare-sparkle {
+  animation: rare-sparkle 1.5s ease-in-out infinite;
+}
+
+/* Category-specific animation classes */
+.animate-rocket-launch {
+  animation: rocket-launch 2s ease-in-out infinite;
+}
+
+.animate-social-glow {
+  animation: social-glow 2s ease-in-out infinite;
+}
+
+.animate-content-wave {
+  animation: content-wave 3s ease-in-out infinite;
+}
+
+.animate-community-help {
+  animation: community-help 2s ease-in-out infinite;
+}
+
+.animate-special-magic {
+  animation: special-magic 3s ease-in-out infinite;
+}
+
+.animate-startup-innovation {
+  animation: startup-innovation 4s linear infinite;
+}
+
+.animate-profile-complete {
+  animation: profile-complete 2s ease-in-out infinite;
+}
+
+.animate-achievement-earn {
+  animation: achievement-earn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+/* Animation Delays */
+.animation-delay-150 {
+  animation-delay: 150ms;
+}
+
+.animation-delay-300 {
+  animation-delay: 300ms;
+}
+
+.animation-delay-500 {
+  animation-delay: 500ms;
+}
+
+/* Rarity-specific effects */
+.legendary-badge {
+  position: relative;
+}
+
+.legendary-badge::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, #fbbf24, #f59e0b, #d97706, #fbbf24);
+  border-radius: inherit;
+  opacity: 0;
+  animation: legendary-aura 3s ease-in-out infinite;
+  z-index: -1;
+}
+
+.epic-badge {
+  position: relative;
+}
+
+.epic-badge::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(45deg, #a855f7, #8b5cf6, #7c3aed, #a855f7);
+  border-radius: inherit;
+  opacity: 0;
+  animation: epic-pulse 2s ease-in-out infinite;
+  z-index: -1;
+}
+
+/* Hover effects */
+.achievement-card:hover .sparkle-effect {
+  opacity: 1;
+  animation: rare-sparkle 1s ease-in-out infinite;
+}
+
+.achievement-card:hover .legendary-shimmer {
+  opacity: 1;
+  animation: shimmer 1.5s ease-in-out;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .animate-float-1,
+  .animate-float-2,
+  .animate-float-3 {
+    animation-duration: 2s;
+  }
+  
+  .animate-legendary-aura,
+  .animate-epic-pulse {
+    animation-duration: 2s;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-shimmer,
+  .animate-float-1,
+  .animate-float-2,
+  .animate-float-3,
+  .animate-sparkle-rotate,
+  .animate-glow-pulse,
+  .animate-legendary-aura,
+  .animate-epic-pulse,
+  .animate-rare-sparkle {
+    animation: none;
+  }
+  
+  .achievement-card {
+    transition: transform 0.2s ease;
+  }
+  
+  .achievement-card:hover {
+    transform: scale(1.02);
+  }
+}

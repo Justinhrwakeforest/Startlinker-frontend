@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Hover Zone Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message-actions {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease-out;
+        }
+        
+        .message-bubble-container:hover .message-actions {
+            opacity: 1;
+            visibility: visible;
+            animation: fadeIn 0.2s ease-out;
+        }
+        
+        .demo-hover-zone {
+            background-color: rgba(255, 0, 0, 0.1);
+            border: 2px dashed rgba(255, 0, 0, 0.3);
+            min-height: 2px;
+        }
+        
+        .demo-hover-zone.active {
+            background-color: rgba(0, 255, 0, 0.2);
+            border-color: rgba(0, 255, 0, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Message Hover Zone Test</h1>
+        
+        <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">❌ Before (Wrong Behavior)</h2>
+            <p class="text-sm text-gray-600 mb-4">Hover anywhere on the message row - actions appear even when hovering outside the message bubble:</p>
+            
+            <!-- OLD: Wrong hover behavior - entire row is hover zone -->
+            <div class="flex justify-end mb-4">
+                <div class="flex space-x-3 max-w-[70%] flex-row-reverse space-x-reverse demo-hover-zone p-2 rounded-lg hover:bg-red-50" onmouseenter="this.classList.add('active')" onmouseleave="this.classList.remove('active')">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+                        ME
+                    </div>
+                    <div class="message-bubble-container">
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2.5 rounded-2xl rounded-tr-sm shadow-lg relative">
+                            <p>This hover zone is too wide! 😞</p>
+                            <!-- Actions appear when hovering anywhere in the red zone -->
+                            <div class="message-actions absolute -left-32 top-0 bg-white rounded-lg shadow-lg border p-1 flex space-x-1">
+                                <button class="p-1.5 hover:bg-gray-100 rounded">😊</button>
+                                <button class="p-1.5 hover:bg-gray-100 rounded">↩️</button>
+                                <button class="p-1.5 hover:bg-gray-100 rounded">📋</button>
+                                <button class="p-1.5 hover:bg-red-50 rounded text-red-500">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-xl p-6">
+            <h2 class="text-xl font-semibold mb-4 text-green-700">✅ After (Correct Behavior)</h2>
+            <p class="text-sm text-gray-600 mb-4">Hover only works when you hover directly over the message bubble (green zone):</p>
+            
+            <!-- NEW: Correct hover behavior - only message bubble is hover zone -->
+            <div class="flex justify-end mb-4">
+                <div class="flex space-x-3 max-w-[70%] flex-row-reverse space-x-reverse p-2">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+                        ME
+                    </div>
+                    <div class="message-bubble-container demo-hover-zone rounded-2xl" onmouseenter="this.classList.add('active')" onmouseleave="this.classList.remove('active')">
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2.5 rounded-2xl rounded-tr-sm shadow-lg relative">
+                            <p>Perfect! Only the message bubble triggers actions! 🎉</p>
+                            <!-- Actions only appear when hovering over the message bubble itself -->
+                            <div class="message-actions absolute -left-32 top-0 bg-white rounded-lg shadow-lg border p-1 flex space-x-1">
+                                <button class="p-1.5 hover:bg-gray-100 rounded" title="React">😊</button>
+                                <button class="p-1.5 hover:bg-gray-100 rounded" title="Reply">↩️</button>
+                                <button class="p-1.5 hover:bg-gray-100 rounded" title="Copy">📋</button>
+                                <button class="p-1.5 hover:bg-red-50 rounded text-red-500" title="Delete">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other user message example -->
+            <div class="flex justify-start mb-4">
+                <div class="flex space-x-3 max-w-[70%] p-2">
+                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+                        JT
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-500 mb-1">James Taylor</div>
+                        <div class="message-bubble-container demo-hover-zone rounded-2xl" onmouseenter="this.classList.add('active')" onmouseleave="this.classList.remove('active')">
+                            <div class="bg-white text-gray-800 px-4 py-2.5 rounded-2xl rounded-tl-sm shadow-sm border border-gray-200 relative">
+                                <p>Great improvement! The hover zone is now precise. 👍</p>
+                                <!-- Actions appear on the right side for other users -->
+                                <div class="message-actions absolute -right-32 top-0 bg-white rounded-lg shadow-lg border p-1 flex space-x-1">
+                                    <button class="p-1.5 hover:bg-gray-100 rounded" title="React">😊</button>
+                                    <button class="p-1.5 hover:bg-gray-100 rounded" title="Reply">↩️</button>
+                                    <button class="p-1.5 hover:bg-gray-100 rounded" title="Copy">📋</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="mt-8 bg-blue-50 rounded-lg p-4">
+            <h3 class="font-semibold text-blue-900 mb-2">🧪 Test Instructions</h3>
+            <ul class="text-sm text-blue-800 space-y-1">
+                <li>• <strong>Red zone (top):</strong> Hover anywhere in the red dashed area - actions appear even outside the message</li>
+                <li>• <strong>Green zone (bottom):</strong> Hover only works when you're directly over the message bubble</li>
+                <li>• Try hovering in empty space around the messages - only the green zone should be precise</li>
+                <li>• The green zone turns darker when you hover over the exact trigger area</li>
+            </ul>
+        </div>
+
+        <!-- Code comparison -->
+        <div class="mt-8 bg-gray-100 rounded-lg p-4">
+            <h3 class="font-semibold text-gray-900 mb-4">Code Changes Made</h3>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <h4 class="font-medium text-red-600 mb-2">❌ Before (Wrong)</h4>
+                    <pre class="text-xs bg-red-50 p-3 rounded border text-red-800"><code>&lt;div className="group flex ..."
+     onMouseEnter={() => setShowActions(true)}
+     onMouseLeave={() => setShowActions(false)}&gt;
+  &lt;!-- Avatar --&gt;
+  &lt;div&gt;...&lt;/div&gt;
+  &lt;!-- Message bubble --&gt;
+  &lt;div&gt;...&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                </div>
+                <div>
+                    <h4 class="font-medium text-green-600 mb-2">✅ After (Correct)</h4>
+                    <pre class="text-xs bg-green-50 p-3 rounded border text-green-800"><code>&lt;div className="group flex ..."&gt;
+  &lt;!-- Avatar --&gt;
+  &lt;div&gt;...&lt;/div&gt;
+  &lt;!-- Message bubble with precise hover --&gt;
+  &lt;div onMouseEnter={() => setShowActions(true)}
+       onMouseLeave={() => setShowActions(false)}&gt;
+    ...message content...
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

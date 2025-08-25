@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Layout Fix - Before vs After</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message-actions {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease-out;
+        }
+        
+        .message-bubble:hover .message-actions {
+            opacity: 1;
+            visibility: visible;
+            animation: fadeIn 0.2s ease-out;
+        }
+        
+        /* Before styles - problematic layout */
+        .layout-before .message-row {
+            padding: 0 16px; /* Excessive padding */
+        }
+        
+        .layout-before .message-bubble-container {
+            max-width: 70%; /* Too restrictive */
+        }
+        
+        /* After styles - improved layout */
+        .layout-after .message-row.own {
+            justify-content: flex-end;
+            padding-right: 16px;
+            padding-left: 8px;
+        }
+        
+        .layout-after .message-row.other {
+            justify-content: flex-start;  
+            padding-left: 16px;
+            padding-right: 8px;
+        }
+        
+        .layout-after .message-bubble-container.own {
+            max-width: 85%;
+        }
+        
+        .layout-after .message-bubble-container.other {
+            max-width: 80%;
+        }
+        
+        .demo-bg {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 p-4">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Message Layout Fix: Before vs After</h1>
+        
+        <div class="grid lg:grid-cols-2 gap-8">
+            <!-- BEFORE - Problematic Layout -->
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden layout-before">
+                <div class="bg-red-500 p-4 text-white">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <span class="text-2xl mr-2">❌</span>
+                        Before (Problematic)
+                    </h2>
+                    <p class="text-red-100 text-sm mt-1">Messages pushed too far right, excessive empty space</p>
+                </div>
+
+                <div class="h-96 demo-bg p-4 space-y-3">
+                    <!-- Date header -->
+                    <div class="flex items-center justify-center my-4">
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">Today</span>
+                    </div>
+
+                    <!-- Other user message -->
+                    <div class="flex justify-start message-row">
+                        <div class="flex space-x-3 message-bubble-container max-w-[70%]">
+                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+                                JT
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500 mb-1">James Taylor</div>
+                                <div class="message-bubble bg-white text-gray-800 px-4 py-2.5 rounded-2xl rounded-tl-sm shadow-sm border border-gray-200 relative">
+                                    <p>Hey! How's the project going?</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Own message - TOO FAR RIGHT -->
+                    <div class="flex justify-end message-row" style="padding: 0 16px;">
+                        <div class="flex space-x-3 message-bubble-container max-w-[70%] flex-row-reverse space-x-reverse">
+                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+                                ME
+                            </div>
+                            <div class="relative">
+                                <!-- Excessive empty space here ➡️ -->
+                                <div class="message-bubble bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2.5 rounded-2xl rounded-tr-sm shadow-lg">
+                                    <p>Going great! But the message layout needs fixing - there's too much empty space and messages are pushed too far right!</p>
+                                    <!-- Actions too far left -->
+                                    <div class="message-actions absolute -left-32 top-0 bg-white rounded-lg shadow-lg border p-1 flex space-x-1">
+                                        <button class="p-1.5 hover:bg-gray-100 rounded text-xs">😊</button>
+                                        <button class="p-1.5 hover:bg-gray-100 rounded text-xs">↩️</button>
+                                        <button class="p-1.5 hover:bg-gray-100 rounded text-xs">📋</button>
+                                    </div>
+                                </div>
+                                <div class="flex items-center mt-1 justify-end">
+                                    <span class="text-xs text-gray-400">2:30 PM</span>
+                                    <svg class="w-4 h-4 text-blue-500 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center text-red-600 text-sm font-medium mt-4 p-2 bg-red-50 rounded">
+                        ⚠️ Issues: Too much empty space, messages pushed too far right, poor balance
+                    </div>
+                </div>
+            </div>
+
+            <!-- AFTER - Improved Layout -->
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden layout-after">
+                <div class="bg-green-500 p-4 text-white">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <span class="text-2xl mr-2">✅</span>
+                        After (Improved)
+                    </h2>
+                    <p class="text-green-100 text-sm mt-1">Better balanced, natural chat flow</p>
+                </div>
+
+                <div class="h-96 demo-bg space-y-3" style="padding: 12px 8px;">
+                    <!-- Date header -->
+                    <div class="flex items-center justify-center my-4">
+                        <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">Today</span>
+                    </div>
+
+                    <!-- Other user message -->
+                    <div class="flex justify-start message-row other">
+                        <div class="flex space-x-3 message-bubble-container other">
+                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+                                JT
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500 mb-1">James Taylor</div>
+                                <div class="message-bubble bg-white text-gray-800 px-4 py-2.5 rounded-2xl rounded-tl-sm shadow-sm border border-gray-200 relative">
+                                    <p>Hey! How's the project going?</p>
+                                    <div class="message-actions absolute -right-28 top-0 bg-white rounded-lg shadow-lg border p-1 flex space-x-1">
+                                        <button class="p-1.5 hover:bg-gray-100 rounded text-xs">😊</button>
+                                        <button class="p-1.5 hover:bg-gray-100 rounded text-xs">↩️</button>
+                                        <button class="p-1.5 hover:bg-gray-100 rounded text-xs">📋</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Own message - PROPERLY POSITIONED -->
+                    <div class="flex justify-end message-row own">
+                        <div class="flex space-x-3 message-bubble-container own flex-row-reverse space-x-reverse">
+                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+                                ME
+                            </div>
+                            <div class="relative">
+                                <!-- Much better spacing! -->
+                                <div class="message-bubble bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2.5 rounded-2xl rounded-tr-sm shadow-lg">
+                                    <p>Much better! The layout is now balanced with proper spacing. Messages feel more natural and comfortable to read!</p>
+                                    <!-- Actions properly positioned -->
+                                    <div class="message-actions absolute -left-28 top-0 bg-white rounded-lg shadow-lg border p-1 flex space-x-1">
+                                        <button class="p-1.5 hover:bg-gray-100 rounded text-xs">😊</button>
+                                        <button class="p-1.5 hover:bg-gray-100 rounded text-xs">↩️</button>
+                                        <button class="p-1.5 hover:bg-gray-100 rounded text-xs">📋</button>
+                                        <button class="p-1.5 hover:bg-red-50 rounded text-xs text-red-500">🗑️</button>
+                                    </div>
+                                </div>
+                                <div class="flex items-center mt-1 justify-end">
+                                    <span class="text-xs text-gray-400">2:31 PM</span>
+                                    <svg class="w-4 h-4 text-blue-500 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Another message to show flow -->
+                    <div class="flex justify-start message-row other">
+                        <div class="flex space-x-3 message-bubble-container other">
+                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+                                JT
+                            </div>
+                            <div>
+                                <div class="message-bubble bg-white text-gray-800 px-4 py-2.5 rounded-2xl shadow-sm border border-gray-200">
+                                    <p>Perfect! The spacing looks much more natural now 👍</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center text-green-600 text-sm font-medium mt-4 p-2 bg-green-50 rounded">
+                        ✨ Fixed: Natural spacing, balanced layout, better message flow
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Changes Summary -->
+        <div class="mt-8 bg-white rounded-xl p-6 shadow-lg">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">📋 Changes Made</h3>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-semibold text-red-600 mb-3">❌ Issues Fixed</h4>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start">
+                            <span class="text-red-500 mr-2">•</span>
+                            <span>Messages pushed too far to the right edge</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-red-500 mr-2">•</span>
+                            <span>Excessive empty space in message area</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-red-500 mr-2">•</span>
+                            <span>Max width too restrictive (70%)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-red-500 mr-2">•</span>
+                            <span>Uniform padding causing imbalance</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-red-500 mr-2">•</span>
+                            <span>Action buttons positioned too far out</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-green-600 mb-3">✅ Improvements Applied</h4>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">•</span>
+                            <span>Asymmetric padding: own messages (px-2 pr-4), others (px-4 pl-2)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">•</span>
+                            <span>Increased max-width: own (85%), others (80%)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">•</span>
+                            <span>Reduced container padding from p-4 to px-3 py-4</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">•</span>
+                            <span>Optimized action button positioning (-28 instead of -32)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">•</span>
+                            <span>Better visual balance and natural chat flow</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Changes -->
+        <div class="mt-8 bg-gray-100 rounded-xl p-6">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">💻 Code Changes</h3>
+            <div class="space-y-4">
+                <div class="bg-white rounded-lg p-4 border-l-4 border-green-500">
+                    <h4 class="font-medium text-gray-800 mb-2">Message Container Padding</h4>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs text-gray-600 mb-1">Before:</p>
+                            <code class="text-xs bg-red-50 p-2 rounded block text-red-800">px-4 (uniform padding)</code>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-600 mb-1">After:</p>
+                            <code class="text-xs bg-green-50 p-2 rounded block text-green-800">{isOwn ? 'px-2 pr-4' : 'px-4 pl-2'}</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg p-4 border-l-4 border-blue-500">
+                    <h4 class="font-medium text-gray-800 mb-2">Message Width Limits</h4>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs text-gray-600 mb-1">Before:</p>
+                            <code class="text-xs bg-red-50 p-2 rounded block text-red-800">max-w-[70%] (all messages)</code>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-600 mb-1">After:</p>
+                            <code class="text-xs bg-green-50 p-2 rounded block text-green-800">{isOwn ? 'max-w-[85%]' : 'max-w-[80%]'}</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
