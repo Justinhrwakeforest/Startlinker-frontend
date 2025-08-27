@@ -584,18 +584,6 @@ const JobUploadForm = ({ isOpen, onClose, onSuccess }) => {
                     </div>
                   )}
 
-                  {/* Real API Notice */}
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <div className="flex items-start">
-                      <CheckCircle className="text-green-500 mt-1 mr-3 flex-shrink-0" size={20} />
-                      <div>
-                        <h4 className="text-green-900 font-medium text-sm sm:text-base">Connected to Real API</h4>
-                        <p className="text-green-700 text-xs sm:text-sm mt-1">
-                          This form is now connected to your Django backend. Jobs will be submitted to the admin panel for review.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
 
                   {/* Job Title */}
                   <div>

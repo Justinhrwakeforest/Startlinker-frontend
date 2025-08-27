@@ -600,7 +600,8 @@ const ChatWindow = ({ conversation, onSendMessage, onNewMessage, loading, isMobi
         }
         
         // Mark all messages in this conversation as read
-        if (conversation?.id && conversation?.unread_count > 0) {
+        // Always mark messages as read when viewing the conversation
+        if (conversation?.id) {
             markConversationAsRead();
         }
         
@@ -623,6 +624,11 @@ const ChatWindow = ({ conversation, onSendMessage, onNewMessage, loading, isMobi
                         setMessages(prev => [...prev, data.message]);
                         onNewMessage(data.message);
                         scrollToBottom();
+                        
+                        // Mark new message as read immediately since user is actively viewing
+                        if (data.message.sender?.id !== currentUser?.id) {
+                            markMessageAsRead(data.message.id);
+                        }
                     }
                 });
 
@@ -658,6 +664,24 @@ const ChatWindow = ({ conversation, onSendMessage, onNewMessage, loading, isMobi
             }
         }
     }, [conversation?.id, onNewMessage]);
+
+    // Mark messages as read when user returns to the tab/window
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (!document.hidden && conversation?.id) {
+                // Mark all messages as read when user comes back to the tab
+                markConversationAsRead();
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        window.addEventListener('focus', handleVisibilityChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('focus', handleVisibilityChange);
+        };
+    }, [conversation?.id]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

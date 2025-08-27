@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
-import { getAvatarUrl, getUserDisplayName } from '../utils/avatarUtils';
+import { getAvatarUrl, getUserDisplayName, getFirstNameInitials } from '../utils/avatarUtils';
 import axios from '../config/axios';
 import api from '../services/api';
 import { useNotifications } from './NotificationSystem';
@@ -528,16 +528,10 @@ const Profile = () => {
             <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
               <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto sm:mx-0">
                 <img
-                  key={profile?.avatar_url} // Force re-render when avatar URL changes
+                  key={profile?.id} // Force re-render when profile changes
                   src={getAvatarUrl(profile, 128)}
-                  alt={profile?.display_name || 'Profile'}
+                  alt={getUserDisplayName(profile)}
                   className={`w-full h-full rounded-2xl object-cover shadow-lg transition-opacity ${uploadingPicture ? 'opacity-50' : 'opacity-100'}`}
-                  onLoad={() => console.log('Avatar loaded successfully:', profile?.avatar_url)}
-                  onError={(e) => {
-                    console.log('Avatar failed to load:', e.target.src);
-                    console.log('Switching to fallback avatar');
-                    e.target.src = getAvatarUrl(profile, 128);
-                  }}
                 />
                 
                 {/* Upload progress indicator */}

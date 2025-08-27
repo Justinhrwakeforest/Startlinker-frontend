@@ -18,11 +18,12 @@ const AddParticipants = ({ conversation, isOpen, onClose, onParticipantsAdded })
     const loadUsers = async () => {
         try {
             setLoading(true);
-            const response = await api.get('/api/auth/users/');
+            const response = await api.get('/api/auth/chat-users/');
             
             // Filter out users who are already participants
             const currentParticipantIds = conversation.participants?.map(p => p.id) || [];
-            const availableUsers = response.data.filter(user => 
+            const allUsers = response.data.results || response.data || [];
+            const availableUsers = allUsers.filter(user => 
                 !currentParticipantIds.includes(user.id)
             );
             

@@ -1,5 +1,6 @@
 // src/components/social/index.js - Social features exports
 export { default as StoriesBar } from './StoriesBar';
+export { default as SuggestedUsersBar } from './SuggestedUsersBar';
 export { default as FollowButton } from './FollowButton';
 export { default as FollowersModal } from './FollowersModal';
 export { default as PersonalizedFeed } from './PersonalizedFeed';

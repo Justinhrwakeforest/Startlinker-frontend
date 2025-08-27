@@ -74,6 +74,14 @@ const FollowButton = ({
           action: isFollowing ? 'unfollow' : 'follow'
         }
       }));
+
+      // Also emit follower count change event for the target user
+      window.dispatchEvent(new CustomEvent('followerCountChanged', {
+        detail: {
+          userId: targetUser.id,
+          action: isFollowing ? 'lost_follower' : 'gained_follower'
+        }
+      }));
     } catch (error) {
       console.error('Error updating follow status:', error);
       console.error('Error details:', error.response?.data);

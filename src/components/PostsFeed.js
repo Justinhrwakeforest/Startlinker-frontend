@@ -4,6 +4,7 @@ import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Send, Image, Ha
 import { AuthContext } from '../context/AuthContext';
 import UserHoverCard from './UserHoverCard';
 import ReportForm from './ReportForm';
+import TrendingTopics from './TrendingTopics';
 import api from '../services/api';
 import { getAvatarUrl, getUserDisplayName } from '../utils/avatarUtils';
 
@@ -2984,14 +2985,6 @@ export default function PostFeed({
   const [userAvatarUrl, setUserAvatarUrl] = useState(user?.avatar_url);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Trending topics
-  const trendingTopics = [
-    { id: 1, name: 'startup', icon: '🚀', count: 156 },
-    { id: 2, name: 'fundraising', icon: '💰', count: 89 },
-    { id: 3, name: 'growth', icon: '📈', count: 124 },
-    { id: 4, name: 'hiring', icon: '👥', count: 67 },
-    { id: 5, name: 'product', icon: '📱', count: 103 }
-  ];
 
   // Sync filter and feedType state with prop changes
   useEffect(() => {
@@ -3293,36 +3286,10 @@ export default function PostFeed({
           {/* Sidebar */}
           <div className="w-full lg:w-80 order-first lg:order-last">
             {/* Trending Topics */}
-            <div className="bg-white rounded-xl p-6 mb-6 border border-gray-100 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                📈 Trending Topics
-              </h3>
-              <div className="space-y-3">
-                {trendingTopics.map(topic => (
-                  <button
-                    key={topic.id}
-                    onClick={() => setSelectedTopic(selectedTopic === topic.name ? null : topic.name)}
-                    className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-100 hover-lift ${
-                      selectedTopic === topic.name
-                        ? 'gradient-primary text-white shadow-lg'
-                        : 'bg-gray-50 hover:bg-gray-100 text-gray-800 hover:shadow-md'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <span className="text-lg">{topic.icon}</span>
-                      <span className="font-semibold text-base">#{topic.name}</span>
-                    </div>
-                    <span className={`text-sm font-bold px-2 py-1 rounded-full ${
-                      selectedTopic === topic.name
-                        ? 'bg-white/20 text-white'
-                        : 'bg-gray-200 text-gray-700'
-                    }`}>
-                      {topic.count}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
+            <TrendingTopics 
+              selectedTopic={selectedTopic}
+              onTopicSelect={setSelectedTopic}
+            />
 
             {/* Community Guidelines */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:block">

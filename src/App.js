@@ -8,6 +8,8 @@ import { forceHttpInDevelopment } from './utils/forceHttp';
 import Auth from './components/Auth';
 import PasswordResetRequest from './components/PasswordResetRequest';
 import PasswordResetConfirm from './components/PasswordResetConfirm';
+import EmailVerification from './components/EmailVerification';
+import EmailVerificationPending from './components/EmailVerificationPending';
 import PostsFeed from './components/PostsFeed';
 import SocialDashboard from './components/SocialDashboard';
 import CollaborationProjectDetail from './components/social/CollaborationProjectDetail';
@@ -200,6 +202,16 @@ const AppRoutes = () => {
           <Route 
             path="/reset-password/:uid/:token" 
             element={!isAuthenticated ? <PasswordResetConfirm /> : <Navigate to="/" />} 
+          />
+          
+          {/* Email verification routes (no navbar/footer) */}
+          <Route 
+            path="/auth/verify-email/:token" 
+            element={<EmailVerification />} 
+          />
+          <Route 
+            path="/verify-email-pending" 
+            element={!isAuthenticated ? <EmailVerificationPending /> : <Navigate to="/" />} 
           />
           
           {/* Public content pages (no navbar/footer) */}

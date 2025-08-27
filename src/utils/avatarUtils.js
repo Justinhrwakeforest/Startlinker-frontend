@@ -35,22 +35,16 @@ export const getFirstNameInitials = (user) => {
  * @returns {string} - Avatar URL
  */
 export const getAvatarUrl = (user, size = 48) => {
-    // Debug logging to see what user data we're getting
-    console.log('getAvatarUrl called with user:', user);
-    
     // If user has a valid avatar URL, return it
     if (user?.avatar_url && user.avatar_url !== 'null' && user.avatar_url !== 'undefined' && user.avatar_url.trim() !== '') {
-        console.log('Using existing avatar_url:', user.avatar_url);
         return user.avatar_url;
     }
     
     if (user?.profile_picture && user.profile_picture !== 'null' && user.profile_picture !== 'undefined' && user.profile_picture.trim() !== '') {
-        console.log('Using existing profile_picture:', user.profile_picture);
         return user.profile_picture;
     }
     
     if (user?.avatar && user.avatar !== 'null' && user.avatar !== 'undefined' && user.avatar.trim() !== '') {
-        console.log('Using existing avatar:', user.avatar);
         return user.avatar;
     }
     
@@ -77,7 +71,6 @@ export const getAvatarUrl = (user, size = 48) => {
     const backgroundColor = colors[colorIndex];
     
     const generatedUrl = `https://ui-avatars.com/?name=${encodeURIComponent(initials)}&background=${backgroundColor}&color=fff&size=${size}&bold=true`;
-    console.log('Generated avatar URL with initials:', initials, 'URL:', generatedUrl);
     
     return generatedUrl;
 };

@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { getAvatarUrl, getUserDisplayName } from '../utils/avatarUtils';
+import { getAvatarUrl, getUserDisplayName, getFirstNameInitials } from '../utils/avatarUtils';
 import axios from '../config/axios';
 import ProfileAchievements from './profile/ProfileAchievements';
 import { 
@@ -143,6 +143,7 @@ const UserProfile = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [isTabMenuOpen, setIsTabMenuOpen] = useState(false);
   const [followModal, setFollowModal] = useState({ isOpen: false, type: null });
+  const [imageError, setImageError] = useState(false);
 
   // Check if viewing own profile
   const isOwnProfile = currentUser && (
@@ -152,6 +153,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     if (identifier) {
+      setImageError(false); // Reset image error state when profile changes
       fetchUserProfile();
     }
   }, [identifier]);
@@ -213,7 +215,7 @@ const UserProfile = () => {
         
         if (isNumeric) {
           // Fetch by user ID using the get_user_by_id endpoint
-          profileResponse = await axios.get(`/api/auth/users/${identifier}/`, {
+          profileResponse = await axios.get(`/api/auth/${identifier}/`, {
             headers: { Authorization: `Token ${token}` }
           });
         } else {
@@ -229,7 +231,7 @@ const UserProfile = () => {
           }
           
           // Now fetch full user details
-          profileResponse = await axios.get(`/api/auth/users/${user.id}/`, {
+          profileResponse = await axios.get(`/api/auth/${user.id}/`, {
             headers: { Authorization: `Token ${token}` }
           });
         }
@@ -521,14 +523,25 @@ const UserProfile = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
             <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
               <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto sm:mx-0">
-                <img
-                  src={getAvatarUrl(profile, 128)}
-                  alt={profile.display_name || 'Profile'}
-                  className="w-full h-full rounded-2xl object-cover shadow-lg"
-                  onError={(e) => {
-                    e.target.src = getAvatarUrl(profile, 128);
-                  }}
-                />
+                {imageError ? (
+                  <div className="w-full h-full rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
+                    <span className="text-white font-bold text-lg">
+                      {getFirstNameInitials(profile)}
+                    </span>
+                  </div>
+                ) : (
+                  <img
+                    src={getAvatarUrl(profile, 128)}
+                    alt={profile.display_name || 'Profile'}
+                    className="w-full h-full rounded-2xl object-cover shadow-lg"
+                    onError={() => {
+                      setImageError(true);
+                    }}
+                    onLoad={() => {
+                      setImageError(false);
+                    }}
+                  />
+                )}
                 
                 {/* Online status indicator */}
                 {profile.is_online && (

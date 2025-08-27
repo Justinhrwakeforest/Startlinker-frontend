@@ -206,19 +206,31 @@ export default function Auth() {
         
         const data = response;
         
-        // Auto-login after successful registration
-        login(data.token, data.user);
-        
-        // Show success and redirect
-        setShowSuccess(true);
-        setTimeout(() => {
-          // Navigate to the intended destination with search term if provided
-          if (searchTerm && redirectTo === '/startups') {
-            navigate(redirectTo, { state: { searchTerm } });
-          } else {
-            navigate(redirectTo);
-          }
-        }, 1500);
+        // Check if email verification was sent
+        if (data.email_verification_sent) {
+          // Redirect to email verification pending page
+          navigate('/verify-email-pending', {
+            state: {
+              email: formData.email,
+              userName: formData.firstName || formData.username,
+              message: data.verification_message
+            }
+          });
+        } else {
+          // Auto-login after successful registration (fallback)
+          login(data.token, data.user);
+          
+          // Show success and redirect
+          setShowSuccess(true);
+          setTimeout(() => {
+            // Navigate to the intended destination with search term if provided
+            if (searchTerm && redirectTo === '/startups') {
+              navigate(redirectTo, { state: { searchTerm } });
+            } else {
+              navigate(redirectTo);
+            }
+          }, 1500);
+        }
       }
       
     } catch (error) {

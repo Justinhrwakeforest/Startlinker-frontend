@@ -7,12 +7,12 @@ import {
   Award, Sparkles, Bell, Settings, Plus, 
   Search, Filter, RefreshCw, Grid, List,
   Heart, MessageCircle, Share2, Bookmark, X,
-  ChevronDown
+  ChevronDown, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from './NotificationSystem';
 import { 
-  StoriesBar, 
+  StoriesBar,
   PersonalizedFeed, 
   PostScheduler,
   CollaborationSpaces,
@@ -22,6 +22,38 @@ import {
 import PostsFeed from './PostsFeed';
 import api from '../services/api';
 import '../styles/social-responsive.css';
+import '../styles/suggested-users.css';
+
+// Simple Suggested User Card - Clean layout without stats
+const SuggestedUserCard = ({ suggestedUser, currentUser, onUserClick, onFollowChange }) => {
+  return (
+    <div className="flex items-center space-x-3 p-3 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 rounded-xl transition-all duration-200">
+      <img
+        src={getAvatarUrl(suggestedUser, 40)}
+        alt={suggestedUser.display_name || suggestedUser.username}
+        className="w-10 h-10 rounded-full shadow-md flex-shrink-0 object-cover cursor-pointer hover:ring-2 hover:ring-blue-200 transition-all"
+        onClick={() => onUserClick(suggestedUser.username)}
+        onError={(e) => {
+          e.target.src = getAvatarUrl(suggestedUser, 40);
+        }}
+      />
+      <div className="flex-1 min-w-0 cursor-pointer" onClick={() => onUserClick(suggestedUser.username)}>
+        <p className="text-sm font-semibold text-gray-900 truncate hover:text-blue-600 transition-colors">
+          {suggestedUser.display_name || suggestedUser.username}
+        </p>
+        <p className="text-xs text-gray-500 truncate hover:text-blue-400 transition-colors">@{suggestedUser.username}</p>
+      </div>
+      <FollowButton
+        targetUser={suggestedUser}
+        currentUser={currentUser}
+        size="small"
+        variant="outline"
+        onFollowChange={onFollowChange}
+      />
+    </div>
+  );
+};
+
 const SocialDashboard = () => {
   const { user } = useAuth();
   const { addNotification } = useNotifications();
@@ -41,15 +73,26 @@ const SocialDashboard = () => {
   // Feed header is always visible - no state needed
   const footerRef = useRef(null);
   useEffect(() => {
-    fetchUserStats();
-    fetchSuggestedUsers();
-    // Set up periodic refresh for stats (every 30 seconds)
-    const statsInterval = setInterval(() => {
+    // Force immediate fetch when component mounts
+    if (user?.id) {
+      console.log('🚀 SocialDashboard mounted, fetching initial data for user:', user.id);
       fetchUserStats();
-    }, 30000);
+      fetchSuggestedUsers();
+    }
+    
+    // Set up periodic refresh for stats (every 10 seconds for more real-time updates)
+    const statsInterval = setInterval(() => {
+      if (user?.id) {
+        console.log('🔄 Periodic stats refresh');
+        fetchUserStats();
+      }
+    }, 10000);
+    
     // Refresh suggested users less frequently (every 2 minutes)
     const suggestionsInterval = setInterval(() => {
-      fetchSuggestedUsers();
+      if (user?.id) {
+        fetchSuggestedUsers();
+      }
     }, 120000);
     // Listen for global follow state changes
     const handleFollowStateChange = (event) => {
@@ -90,15 +133,47 @@ const SocialDashboard = () => {
         fetchUserStats();
       }, 500);
     };
+
+    // Listen for follower count changes (when someone follows/unfollows the current user)
+    const handleFollowerCountChanged = (event) => {
+      const { action } = event.detail;
+      if (action === 'gained_follower') {
+        setStats(prev => ({
+          ...prev,
+          followers: prev.followers + 1
+        }));
+      } else if (action === 'lost_follower') {
+        setStats(prev => ({
+          ...prev,
+          followers: Math.max(0, prev.followers - 1)
+        }));
+      }
+      // Refresh actual stats to ensure accuracy
+      setTimeout(() => {
+        fetchUserStats();
+      }, 1000);
+    };
     window.addEventListener('followStateChanged', handleFollowStateChange);
     window.addEventListener('postCreated', handlePostCreated);
+    window.addEventListener('followerCountChanged', handleFollowerCountChanged);
     return () => {
       window.removeEventListener('followStateChanged', handleFollowStateChange);
       window.removeEventListener('postCreated', handlePostCreated);
+      window.removeEventListener('followerCountChanged', handleFollowerCountChanged);
       clearInterval(statsInterval);
       clearInterval(suggestionsInterval);
     };
-  }, []);
+  }, [user?.id]);
+
+  // Separate useEffect to handle user changes
+  useEffect(() => {
+    if (user?.id && !loading) {
+      console.log('👤 User changed or became available, fetching fresh data:', user.id);
+      fetchUserStats();
+      fetchSuggestedUsers();
+    }
+  }, [user?.id]);
+  
   useEffect(() => {
     const handleScroll = () => {
       if (footerRef.current) {
@@ -123,29 +198,72 @@ const SocialDashboard = () => {
         console.log('No user ID available for stats');
         return;
       }
-      console.log('Fetching user stats for user ID:', user.id);
-      const response = await api.get(`/api/social/social-stats/${user.id}/`);
-      console.log('User stats response:', response.data);
-      // Transform the API response to match our expected format
+      console.log('🔄 Fetching user stats for user ID:', user.id);
+      
+      // Try multiple API endpoints for better compatibility
+      let response;
+      try {
+        response = await api.get(`/api/social/social-stats/${user.id}/`);
+      } catch (primaryError) {
+        console.warn('Primary stats endpoint failed, trying fallback:', primaryError);
+        try {
+          // Try alternative endpoint structure
+          response = await api.get(`/auth/${user.id}/social-stats/`);
+        } catch (secondaryError) {
+          console.warn('Secondary stats endpoint failed, trying basic endpoint:', secondaryError);
+          // Try basic user info endpoint
+          const userResponse = await api.get(`/api/auth/user/${user.id}/`);
+          response = { data: userResponse.data };
+        }
+      }
+      
+      console.log('✅ User stats response:', response.data);
+      
+      // Transform the API response to match our expected format with multiple field name possibilities
       const transformedStats = {
-        posts: response.data.posts_count || 0,
-        followers: response.data.followers_count || 0,
-        following: response.data.following_count || 0,
-        stories: response.data.stories_count || 0,
-        collections: response.data.collections_count || 0
+        posts: response.data.posts_count || response.data.post_count || response.data.posts || 0,
+        followers: response.data.followers_count || response.data.follower_count || response.data.followers || 0,
+        following: response.data.following_count || response.data.followings_count || response.data.following || 0,
+        stories: response.data.stories_count || response.data.story_count || response.data.stories || 0,
+        collections: response.data.collections_count || response.data.collection_count || response.data.collections || 0
       };
+      
+      console.log('📊 Transformed stats:', transformedStats);
       setStats(transformedStats);
+      
     } catch (error) {
-      console.error('Error fetching user stats:', error);
+      console.error('❌ Error fetching user stats:', error);
       console.error('Error details:', error.response?.data);
-      // Set default values if API fails
-      setStats({
-        posts: 0,
-        followers: 0,
-        following: 0,
-        stories: 0,
-        collections: 0
-      });
+      
+      // Try to get basic counts from other endpoints as fallback
+      try {
+        console.log('🔄 Trying fallback methods for stats...');
+        const [postsResponse, followsResponse] = await Promise.allSettled([
+          api.get('/api/posts/').then(res => res.data?.results?.length || 0),
+          api.get('/api/social/follows/following/').then(res => res.data?.results?.length || res.data?.length || 0)
+        ]);
+        
+        const fallbackStats = {
+          posts: postsResponse.status === 'fulfilled' ? postsResponse.value : 0,
+          followers: 0, // Hard to get without specific endpoint
+          following: followsResponse.status === 'fulfilled' ? followsResponse.value : 0,
+          stories: 0,
+          collections: 0
+        };
+        
+        console.log('📊 Fallback stats:', fallbackStats);
+        setStats(fallbackStats);
+      } catch (fallbackError) {
+        console.error('❌ Fallback methods also failed:', fallbackError);
+        // Set default values if everything fails
+        setStats({
+          posts: 0,
+          followers: 0,
+          following: 0,
+          stories: 0,
+          collections: 0
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -318,58 +436,26 @@ const SocialDashboard = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
-          {/* Enhanced Sidebar */}
-          <div className="lg:col-span-1 order-2 lg:order-1">
-            <div className="space-y-4 sm:space-y-6 sticky top-20">
-              {/* User Stats Card */}
-              <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl shadow-lg border border-gray-100 p-4 sm:p-6">
-                <div className="flex items-center space-x-3 mb-4">
-                  {user?.avatar || user?.profile_picture ? (
-                    <img
-                      src={user.avatar || user.profile_picture}
-                      alt={user?.username}
-                      className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold border-2 border-white shadow-md">
-                      {(() => {
-                        const name = user?.first_name || user?.username || 'User';
-                        return name.split(' ').map(word => word[0]).join('').slice(0, 2).toUpperCase();
-                      })()}
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <h4 className="font-bold text-gray-900">{getUserDisplayName(user)}</h4>
-                    <p className="text-sm text-gray-600">@{user?.username}</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-3 gap-3 text-center">
-                  <div className="bg-white rounded-xl p-3 shadow-sm">
-                    <div className="text-lg font-bold text-gray-900">{stats.posts}</div>
-                    <div className="text-xs text-gray-600">Posts</div>
-                  </div>
-                  <div className="bg-white rounded-xl p-3 shadow-sm">
-                    <div className="text-lg font-bold text-gray-900">{stats.followers}</div>
-                    <div className="text-xs text-gray-600">Followers</div>
-                  </div>
-                  <div className="bg-white rounded-xl p-3 shadow-sm">
-                    <div className="text-lg font-bold text-gray-900">{stats.following}</div>
-                    <div className="text-xs text-gray-600">Following</div>
-                  </div>
-                </div>
-              </div>
-              {/* Suggested Users */}
+          {/* Left Sidebar - Suggested Users with Vertical Scroll */}
+          <div className="lg:col-span-1 order-1">
+            <div className="sticky top-20">
+              {/* Suggested Users Vertical List */}
               <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-base sm:text-lg font-bold text-gray-900 flex items-center">
                     <Users className="w-5 h-5 text-purple-500 mr-2" />
-                    Suggested for You
+                    <span className="hidden sm:inline">Suggested for You</span>
+                    <span className="sm:hidden">Suggested</span>
                   </h3>
                   <span className="text-xs text-gray-500 bg-purple-50 px-2 py-1 rounded-full">
                     {suggestedUsers.length}
                   </span>
                 </div>
-                <div className="space-y-3">
+                
+                {/* Vertical Scrollable Container */}
+                <div 
+                  className="overflow-y-auto max-h-[400px] sm:max-h-[600px] space-y-3 suggested-users-vertical"
+                >
                   {suggestedUsers.length === 0 ? (
                     <div className="text-center py-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -380,57 +466,34 @@ const SocialDashboard = () => {
                     </div>
                   ) : (
                     suggestedUsers.map((suggestedUser) => (
-                      <div key={suggestedUser.id} className="flex items-center space-x-3 p-3 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 rounded-xl transition-all duration-200">
-                        <img
-                          src={getAvatarUrl(suggestedUser, 40)}
-                          alt={suggestedUser.display_name || suggestedUser.username}
-                          className="w-10 h-10 rounded-full shadow-md flex-shrink-0 object-cover cursor-pointer"
-                          onClick={() => handleUserClick(suggestedUser.username)}
-                          onError={(e) => {
-                            e.target.src = getAvatarUrl(suggestedUser, 40);
-                          }}
-                        />
-                        <div className="flex-1 min-w-0 cursor-pointer" onClick={() => handleUserClick(suggestedUser.username)}>
-                          <p className="text-sm font-semibold text-gray-900 truncate hover:text-blue-600 transition-colors">
-                            {suggestedUser.display_name || suggestedUser.username}
-                          </p>
-                          <p className="text-xs text-gray-500 truncate hover:text-blue-400 transition-colors">@{suggestedUser.username}</p>
-                        </div>
-                        <FollowButton
-                          targetUser={suggestedUser}
-                          currentUser={user}
-                          size="small"
-                          variant="outline"
-                          onFollowChange={(action, targetUser) => {
-                            // Handle follow/unfollow actions
-                            if (action === 'follow') {
-                              // Remove from suggestions when followed
-                              setSuggestedUsers(prev => 
-                                prev.filter(u => u.id !== targetUser.id)
-                              );
-                              // Update stats
-                              setStats(prev => ({
-                                ...prev,
-                                following: prev.following + 1
-                              }));
-                              // Refresh suggested users after a short delay
-                              setTimeout(() => {
-                                fetchSuggestedUsers();
-                              }, 1000);
-                            } else if (action === 'unfollow') {
-                              // Update stats
-                              setStats(prev => ({
-                                ...prev,
-                                following: Math.max(0, prev.following - 1)
-                              }));
-                              // Refresh suggested users
-                              setTimeout(() => {
-                                fetchSuggestedUsers();
-                              }, 1000);
-                            }
-                          }}
-                        />
-                      </div>
+                      <SuggestedUserCard 
+                        key={suggestedUser.id}
+                        suggestedUser={suggestedUser}
+                        currentUser={user}
+                        onUserClick={handleUserClick}
+                        onFollowChange={(action, targetUser) => {
+                          if (action === 'follow') {
+                            setSuggestedUsers(prev => 
+                              prev.filter(u => u.id !== targetUser.id)
+                            );
+                            setStats(prev => ({
+                              ...prev,
+                              following: prev.following + 1
+                            }));
+                            setTimeout(() => {
+                              fetchSuggestedUsers();
+                            }, 1000);
+                          } else if (action === 'unfollow') {
+                            setStats(prev => ({
+                              ...prev,
+                              following: Math.max(0, prev.following - 1)
+                            }));
+                            setTimeout(() => {
+                              fetchSuggestedUsers();
+                            }, 1000);
+                          }
+                        }}
+                      />
                     ))
                   )}
                 </div>
@@ -438,7 +501,7 @@ const SocialDashboard = () => {
             </div>
           </div>
           {/* Main Content Area */}
-          <div className="lg:col-span-3 order-1 lg:order-2">
+          <div className="lg:col-span-3 order-2">
             {activeTab === 'posts' && (
               <div className="space-y-3 sm:space-y-4">
                 {/* Enhanced Header Section */}
