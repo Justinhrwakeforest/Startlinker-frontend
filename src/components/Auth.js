@@ -168,6 +168,18 @@ export default function Auth() {
         
         const data = response;
         
+        // Check if email verification is required
+        if (data.email_verified === false) {
+          // Redirect to email verification pending page
+          navigate('/verify-email-pending', {
+            state: {
+              email: formData.email,
+              message: 'Please verify your email address before logging in.'
+            }
+          });
+          return;
+        }
+        
         // Use context login function
         login(data.token, data.user);
         
@@ -206,18 +218,18 @@ export default function Auth() {
         
         const data = response;
         
-        // Check if email verification was sent
-        if (data.email_verification_sent) {
-          // Redirect to email verification pending page
+        // Check if email verification is required
+        if (data.email_verification_required || data.email_verification_sent) {
+          // Always redirect to email verification pending page for new signups
           navigate('/verify-email-pending', {
             state: {
               email: formData.email,
               userName: formData.firstName || formData.username,
-              message: data.verification_message
+              message: data.verification_message || 'Please check your email to verify your account.'
             }
           });
-        } else {
-          // Auto-login after successful registration (fallback)
+        } else if (data.token) {
+          // Only auto-login if token is provided (development mode)
           login(data.token, data.user);
           
           // Show success and redirect
@@ -230,6 +242,15 @@ export default function Auth() {
               navigate(redirectTo);
             }
           }, 1500);
+        } else {
+          // No token provided - must verify email first
+          navigate('/verify-email-pending', {
+            state: {
+              email: formData.email,
+              userName: formData.firstName || formData.username,
+              message: 'Please check your email to verify your account before logging in.'
+            }
+          });
         }
       }
       
@@ -239,6 +260,17 @@ export default function Auth() {
       if (error.response?.data) {
         // Handle field-specific errors from backend
         const backendErrors = error.response.data;
+        
+        // Check if it's an email verification error
+        if (error.response.status === 403 && backendErrors.error === 'Email not verified') {
+          navigate('/verify-email-pending', {
+            state: {
+              email: backendErrors.email || formData.email,
+              message: backendErrors.message || 'Please verify your email address before logging in.'
+            }
+          });
+          return;
+        }
         
         if (typeof backendErrors === 'object') {
           setErrors(backendErrors);
