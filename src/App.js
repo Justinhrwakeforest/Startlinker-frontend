@@ -1,6 +1,6 @@
 // src/App.js - Complete App Component with All Routes including My Claims
-import React, { useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import { NotificationProvider } from './components/NotificationSystem';
 import './config/axios'; // Import axios configuration
@@ -43,6 +43,8 @@ import Welcome from './components/Welcome';
 import Layout from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
 import StartupGuide from './components/StartupGuide';
+import NotFoundPage from './components/NotFoundPage';
+import { setupNavigationListeners, detectAndFixBrokenState } from './utils/navigationFix';
 // Removed deck analyzer imports - functionality disabled
 import './App.css';
 
@@ -90,6 +92,12 @@ const ErrorFallback = ({ error, resetError }) => (
           className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
         >
           Go to Homepage
+        </button>
+        <button 
+          onClick={() => window.location.reload()}
+          className="w-full px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition-colors"
+        >
+          Reload Page
         </button>
       </div>
       {process.env.NODE_ENV === 'development' && (
@@ -164,6 +172,24 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
+// Navigation Monitor Component
+const NavigationMonitor = () => {
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    // Setup navigation listeners and error detection
+    setupNavigationListeners(navigate);
+    detectAndFixBrokenState();
+    
+    // Cleanup function
+    return () => {
+      // Navigation listeners are cleaned up automatically
+    };
+  }, [navigate]);
+  
+  return null; // This component doesn't render anything
+};
+
 // App Routes Component
 const AppRoutes = () => {
   const authContextValue = useContext(AuthContext);
@@ -180,6 +206,7 @@ const AppRoutes = () => {
 
   return (
     <Router>
+      <NavigationMonitor />
       <div className="App min-h-screen bg-gray-50">
         <Routes>
           {/* Public welcome page - shows when not authenticated (no navbar/footer) */}
@@ -593,11 +620,19 @@ const AppRoutes = () => {
             element={<UsernameDemo />} 
           />
           
-          {/* Catch-all redirect */}
+          {/* 404 Not Found Route */}
+          <Route 
+            path="/404" 
+            element={<NotFoundPage />}
+          />
+          
+          {/* Catch-all route - handle unknown URLs */}
           <Route 
             path="*" 
             element={
-              isAuthenticated ? <Navigate to="/" replace /> : <Navigate to="/welcome" replace />
+              <Layout>
+                <NotFoundPage />
+              </Layout>
             } 
           />
         </Routes>

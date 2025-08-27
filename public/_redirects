@@ -1,1 +1,11 @@
+# Handle React Router SPA routing
+# Static assets
+/static/*  /static/:splat  200
+/favicon.ico  /favicon.ico  200
+/manifest.json  /manifest.json  200
+
+# API calls should go to backend
+/api/*  https://startlinker-backend.onrender.com/api/:splat  200
+
+# All other routes should serve the React app
 /*    /index.html   200
