@@ -1,5 +1,0 @@
-# API proxy to backend
-/api/* https://startlinker-backend.onrender.com/api/:splat 200
-
-# React Router - Catch all routes and serve index.html
-/* /index.html 200
