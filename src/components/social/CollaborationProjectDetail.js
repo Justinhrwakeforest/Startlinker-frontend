@@ -1084,10 +1084,10 @@ const CollaborationProjectDetail = () => {
                   style={{ color: '#374151', backgroundColor: 'white' }}
                 >
                   <option value="planning" style={{ color: '#374151', backgroundColor: 'white' }}>Planning</option>
-                  <option value="in_progress" style={{ color: '#374151', backgroundColor: 'white' }}>In Progress</option>
-                  <option value="review" style={{ color: '#374151', backgroundColor: 'white' }}>Review</option>
-                  <option value="completed" style={{ color: '#374151', backgroundColor: 'white' }}>Completed</option>
+                  <option value="active" style={{ color: '#374151', backgroundColor: 'white' }}>Active</option>
                   <option value="on_hold" style={{ color: '#374151', backgroundColor: 'white' }}>On Hold</option>
+                  <option value="completed" style={{ color: '#374151', backgroundColor: 'white' }}>Completed</option>
+                  <option value="archived" style={{ color: '#374151', backgroundColor: 'white' }}>Archived</option>
                 </select>
               </div>
 

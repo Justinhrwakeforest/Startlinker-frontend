@@ -95,13 +95,19 @@ const Messages = () => {
     useEffect(() => {
         const handleUnreadCountChange = () => {
             loadUnreadCount();
+        };
+
+        const handleConversationsRefresh = () => {
             loadConversations();
+            loadUnreadCount();
         };
 
         window.addEventListener('unreadCountChanged', handleUnreadCountChange);
+        window.addEventListener('conversationsRefresh', handleConversationsRefresh);
         
         return () => {
             window.removeEventListener('unreadCountChanged', handleUnreadCountChange);
+            window.removeEventListener('conversationsRefresh', handleConversationsRefresh);
         };
     }, []);
 
@@ -181,32 +187,45 @@ const Messages = () => {
         try {
             setLoading(true);
             const response = await api.get(`/api/messaging/conversations/${conversation.id}/`);
-            setCurrentConversation(response.data);
             
             // Update URL without causing a page reload
             navigate(`/messages/${conversation.id}`, { replace: true });
             
             // Always mark messages as read when viewing a conversation
-            await api.post('/api/messaging/mark-read/', {
-                conversation_id: conversation.id
-            });
+            try {
+                await api.post('/api/messaging/mark-read/', {
+                    conversation_id: conversation.id
+                });
+                console.log('Messages marked as read for conversation:', conversation.id);
+                
+                // Update conversation in list to show 0 unread count immediately
+                setConversations(prev => {
+                    if (!Array.isArray(prev)) {
+                        console.warn('Conversations is not an array in handleConversationSelect:', prev);
+                        return [];
+                    }
+                    return prev.map(c => 
+                        c.id === conversation.id 
+                            ? { ...c, unread_count: 0 }
+                            : c
+                    );
+                });
+                
+                // Reload conversations to get accurate unread counts from server
+                // This ensures all unread counts are synchronized
+                setTimeout(async () => {
+                    await loadConversations();
+                    await loadUnreadCount();
+                }, 100);
+                
+                // Trigger navbar unread count refresh
+                window.dispatchEvent(new CustomEvent('unreadCountChanged'));
+            } catch (markReadError) {
+                console.error('Error marking messages as read:', markReadError);
+                // Still proceed to show the conversation even if mark-as-read fails
+            }
             
-            // Update conversation in list to show 0 unread count
-            setConversations(prev => {
-                if (!Array.isArray(prev)) {
-                    console.warn('Conversations is not an array in handleConversationSelect:', prev);
-                    return [];
-                }
-                return prev.map(c => 
-                    c.id === conversation.id 
-                        ? { ...c, unread_count: 0 }
-                        : c
-                );
-            });
-            loadUnreadCount();
-            
-            // Trigger navbar unread count refresh
-            window.dispatchEvent(new CustomEvent('unreadCountChanged'));
+            setCurrentConversation(response.data);
         } catch (error) {
             console.error('Error loading conversation:', error);
         } finally {

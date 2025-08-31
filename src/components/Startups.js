@@ -189,100 +189,106 @@ const Startups = () => {
 
   // Enhanced Mobile-First Startup Card Component
   const StartupCard = React.memo(({ startup, onBookmark, onLike, bookmarkLoading, likeLoading }) => (
-    <div className="group bg-white rounded-xl sm:rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg sm:hover:shadow-xl transition-all duration-300 sm:transform sm:hover:-translate-y-1 overflow-hidden h-full flex flex-col">
-      {/* Cover Image with responsive aspect ratio */}
+    <div 
+      className="group rounded-xl sm:rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg sm:hover:shadow-xl transition-all duration-300 sm:transform sm:hover:-translate-y-1 overflow-hidden h-full flex flex-col relative"
+      style={startup.cover_image_display_url ? {
+        backgroundImage: `url(${startup.cover_image_display_url})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      } : { backgroundColor: 'white' }}
+    >
+      {/* Background overlay for better text readability when there's a cover image */}
       {startup.cover_image_display_url && (
-        <div className="relative aspect-[16/9] sm:aspect-video overflow-hidden">
-          <img 
-            src={startup.cover_image_display_url}
-            alt={`${startup.name} cover`}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            loading="lazy"
-            onError={(e) => {
-              e.target.style.display = 'none';
-              e.target.parentElement.style.display = 'none';
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-          
-          {/* Responsive Badges overlay */}
-          <div className="absolute top-2 sm:top-3 left-2 sm:left-3 flex flex-wrap gap-1 sm:gap-2">
-            {startup.is_featured && (
-              <span className="px-1.5 py-0.5 sm:px-2.5 sm:py-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-xs font-bold rounded-full shadow-lg backdrop-blur-sm">
-                <Crown className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-0.5 sm:mr-1" />
-                <span className="hidden xs:inline">Featured</span>
-                <span className="xs:hidden">★</span>
-              </span>
-            )}
-            {startup.is_claimed && startup.claim_verified && (
-              <span className="px-1.5 py-0.5 sm:px-2.5 sm:py-1 bg-gradient-to-r from-green-400 to-green-500 text-white text-xs font-bold rounded-full shadow-lg backdrop-blur-sm">
-                <Shield className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-0.5 sm:mr-1" />
-                <span className="hidden xs:inline">Verified</span>
-                <span className="xs:hidden">✓</span>
-              </span>
-            )}
-          </div>
-
-          {/* Mobile-optimized Action buttons overlay */}
-          <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex gap-1 sm:gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onBookmark(startup.id, startup.is_bookmarked);
-              }}
-              disabled={bookmarkLoading}
-              className={`p-1.5 sm:p-2 rounded-full backdrop-blur-sm transition-all duration-200 ${
-                startup.is_bookmarked
-                  ? 'bg-blue-500 text-white shadow-lg'
-                  : 'bg-white/90 text-gray-700 hover:bg-blue-500 hover:text-white shadow-md'
-              } disabled:opacity-50 touch-manipulation`}
-            >
-              {bookmarkLoading ? (
-                <Loader className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
-              ) : startup.is_bookmarked ? (
-                <BookmarkCheck className="w-3 h-3 sm:w-4 sm:h-4" />
-              ) : (
-                <Bookmark className="w-3 h-3 sm:w-4 sm:h-4" />
-              )}
-            </button>
-
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onLike(startup.id, startup.is_liked);
-              }}
-              disabled={likeLoading}
-              className={`p-1.5 sm:p-2 rounded-full backdrop-blur-sm transition-all duration-200 ${
-                startup.is_liked
-                  ? 'bg-red-500 text-white shadow-lg'
-                  : 'bg-white/90 text-gray-700 hover:bg-red-500 hover:text-white shadow-md'
-              } disabled:opacity-50 touch-manipulation`}
-            >
-              {likeLoading ? (
-                <Loader className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
-              ) : (
-                <Heart className={`w-3 h-3 sm:w-4 sm:h-4 ${startup.is_liked ? 'fill-current' : ''}`} />
-              )}
-            </button>
-          </div>
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-black/30" />
       )}
+      
+      {/* Responsive Badges overlay */}
+      <div className="absolute top-2 sm:top-3 left-2 sm:left-3 flex flex-wrap gap-1 sm:gap-2 z-10">
+        {startup.is_featured && (
+          <span className="px-1.5 py-0.5 sm:px-2.5 sm:py-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-xs font-bold rounded-full shadow-lg backdrop-blur-sm">
+            <Crown className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-0.5 sm:mr-1" />
+            <span className="hidden xs:inline">Featured</span>
+            <span className="xs:hidden">★</span>
+          </span>
+        )}
+        {startup.is_claimed && startup.claim_verified && (
+          <span className="px-1.5 py-0.5 sm:px-2.5 sm:py-1 bg-gradient-to-r from-green-400 to-green-500 text-white text-xs font-bold rounded-full shadow-lg backdrop-blur-sm">
+            <Shield className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-0.5 sm:mr-1" />
+            <span className="hidden xs:inline">Verified</span>
+            <span className="xs:hidden">✓</span>
+          </span>
+        )}
+      </div>
 
-      {/* Mobile-optimized Card Content */}
-      <div className="p-3 sm:p-4 flex-grow flex flex-col">
+      {/* Mobile-optimized Action buttons overlay */}
+      <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex gap-1 sm:gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 z-10">
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onBookmark(startup.id, startup.is_bookmarked);
+          }}
+          disabled={bookmarkLoading}
+          className={`p-1.5 sm:p-2 rounded-full backdrop-blur-sm transition-all duration-200 ${
+            startup.is_bookmarked
+              ? 'bg-blue-500 text-white shadow-lg'
+              : 'bg-white/90 text-gray-700 hover:bg-blue-500 hover:text-white shadow-md'
+          } disabled:opacity-50 touch-manipulation`}
+        >
+          {bookmarkLoading ? (
+            <Loader className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
+          ) : startup.is_bookmarked ? (
+            <BookmarkCheck className="w-3 h-3 sm:w-4 sm:h-4" />
+          ) : (
+            <Bookmark className="w-3 h-3 sm:w-4 sm:h-4" />
+          )}
+        </button>
+
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onLike(startup.id, startup.is_liked);
+          }}
+          disabled={likeLoading}
+          className={`p-1.5 sm:p-2 rounded-full backdrop-blur-sm transition-all duration-200 ${
+            startup.is_liked
+              ? 'bg-red-500 text-white shadow-lg'
+              : 'bg-white/90 text-gray-700 hover:bg-red-500 hover:text-white shadow-md'
+          } disabled:opacity-50 touch-manipulation`}
+        >
+          {likeLoading ? (
+            <Loader className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
+          ) : (
+            <Heart className={`w-3 h-3 sm:w-4 sm:h-4 ${startup.is_liked ? 'fill-current' : ''}`} />
+          )}
+        </button>
+      </div>
+
+      {/* Mobile-optimized Card Content - positioned at bottom for background image cards */}
+      <div 
+        className={`p-3 sm:p-4 flex-grow flex flex-col relative z-10 ${
+          startup.cover_image_display_url 
+            ? 'mt-auto bg-gradient-to-t from-black/80 via-black/60 to-transparent text-white' 
+            : 'bg-white text-gray-900'
+        }`}
+      >
         {/* Header - responsive layout */}
         <div className="flex items-start justify-between mb-2 sm:mb-3">
           <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
-            {!startup.cover_image_display_url && (
+            {!startup.cover_image_display_url && startup.logo && (
               <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg sm:rounded-xl shadow-sm flex items-center justify-center text-white text-lg sm:text-xl font-bold">
                 {startup.logo}
               </div>
             )}
             <div className="flex-1 min-w-0">
               <div className="flex items-center space-x-1 sm:space-x-2 mb-1">
-                <h3 className="text-sm sm:text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1">
+                <h3 className={`text-sm sm:text-lg font-bold transition-colors line-clamp-1 ${
+                  startup.cover_image_display_url 
+                    ? 'text-white group-hover:text-blue-300' 
+                    : 'text-gray-900 group-hover:text-blue-600'
+                }`}>
                   {startup.name}
                 </h3>
                 {!startup.cover_image_display_url && startup.is_featured && (
@@ -293,11 +299,19 @@ const Startups = () => {
                 )}
               </div>
               <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
-                <span className="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded border border-blue-200">
+                <span className={`inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 text-xs font-medium rounded border ${
+                  startup.cover_image_display_url
+                    ? 'bg-white/20 text-white border-white/30 backdrop-blur-sm'
+                    : 'bg-blue-100 text-blue-700 border-blue-200'
+                }`}>
                   {screenSize.isMobile ? startup.industry_name.substring(0, 12) + (startup.industry_name.length > 12 ? '...' : '') : startup.industry_name}
                 </span>
                 {startup.funding_amount && (
-                  <span className="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 bg-green-100 text-green-700 text-xs font-medium rounded border border-green-200">
+                  <span className={`inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 text-xs font-medium rounded border ${
+                    startup.cover_image_display_url
+                      ? 'bg-green-500/20 text-green-200 border-green-400/30 backdrop-blur-sm'
+                      : 'bg-green-100 text-green-700 border-green-200'
+                  }`}>
                     <DollarSign className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />
                     <span className="hidden sm:inline">{startup.funding_amount}</span>
                     <span className="sm:hidden">Funded</span>
@@ -306,38 +320,60 @@ const Startups = () => {
               </div>
             </div>
           </div>
-          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-300 group-hover:text-blue-500 transition-colors flex-shrink-0" />
+          <ChevronRight className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors flex-shrink-0 ${
+            startup.cover_image_display_url
+              ? 'text-white/60 group-hover:text-white'
+              : 'text-gray-300 group-hover:text-blue-500'
+          }`} />
         </div>
         
         {/* Description - responsive line clamp */}
-        <p className="text-gray-600 text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-2 sm:line-clamp-2 leading-relaxed flex-shrink-0">
+        <p className={`text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-2 sm:line-clamp-2 leading-relaxed flex-shrink-0 ${
+          startup.cover_image_display_url
+            ? 'text-white/90'
+            : 'text-gray-600'
+        }`}>
           {startup.description}
         </p>
         
         {/* Metrics Grid - responsive layout */}
         <div className="grid grid-cols-2 gap-1 sm:gap-2 mb-2 sm:mb-3 text-xs sm:text-sm flex-shrink-0">
-          <div className="flex items-center space-x-1 sm:space-x-1.5 text-gray-600">
-            <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-400 flex-shrink-0" />
+          <div className={`flex items-center space-x-1 sm:space-x-1.5 ${
+            startup.cover_image_display_url ? 'text-white/80' : 'text-gray-600'
+          }`}>
+            <MapPin className={`w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 ${
+              startup.cover_image_display_url ? 'text-white/60' : 'text-gray-400'
+            }`} />
             <span className="truncate text-xs">
               {screenSize.isMobile && startup.location.length > 12 
                 ? startup.location.substring(0, 12) + '...' 
                 : startup.location}
             </span>
           </div>
-          <div className="flex items-center space-x-1 sm:space-x-1.5 text-gray-600">
-            <Users className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-400 flex-shrink-0" />
+          <div className={`flex items-center space-x-1 sm:space-x-1.5 ${
+            startup.cover_image_display_url ? 'text-white/80' : 'text-gray-600'
+          }`}>
+            <Users className={`w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 ${
+              startup.cover_image_display_url ? 'text-white/60' : 'text-gray-400'
+            }`} />
             <span className="text-xs">
               {screenSize.isMobile ? `${startup.employee_count}+` : `${startup.employee_count}+ people`}
             </span>
           </div>
-          <div className="flex items-center space-x-1 sm:space-x-1.5 text-gray-600">
+          <div className={`flex items-center space-x-1 sm:space-x-1.5 ${
+            startup.cover_image_display_url ? 'text-white/80' : 'text-gray-600'
+          }`}>
             <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-500 flex-shrink-0" />
             <span className="text-xs">
               {startup.average_rating?.toFixed(1) || 'N/A'} ({startup.total_ratings})
             </span>
           </div>
-          <div className="flex items-center space-x-1 sm:space-x-1.5 text-gray-600">
-            <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-400 flex-shrink-0" />
+          <div className={`flex items-center space-x-1 sm:space-x-1.5 ${
+            startup.cover_image_display_url ? 'text-white/80' : 'text-gray-600'
+          }`}>
+            <Eye className={`w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 ${
+              startup.cover_image_display_url ? 'text-white/60' : 'text-gray-400'
+            }`} />
             <span className="text-xs">
               {screenSize.isMobile ? startup.views : `${startup.views} views`}
             </span>
@@ -351,13 +387,21 @@ const Startups = () => {
               {startup.tags_list.slice(0, screenSize.isMobile ? 2 : 3).map((tag, index) => (
                 <span
                   key={index}
-                  className="px-1.5 py-0.5 sm:px-2 sm:py-0.5 bg-gray-100 text-gray-700 text-xs font-medium rounded border border-gray-200 hover:bg-gray-200 transition-colors"
+                  className={`px-1.5 py-0.5 sm:px-2 sm:py-0.5 text-xs font-medium rounded border transition-colors ${
+                    startup.cover_image_display_url
+                      ? 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20 backdrop-blur-sm'
+                      : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200'
+                  }`}
                 >
                   {screenSize.isMobile && tag.length > 8 ? tag.substring(0, 8) + '...' : tag}
                 </span>
               ))}
               {startup.tags_list.length > (screenSize.isMobile ? 2 : 3) && (
-                <span className="text-xs text-gray-500 bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded border border-gray-200">
+                <span className={`text-xs px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded border ${
+                  startup.cover_image_display_url
+                    ? 'text-white/70 bg-white/10 border-white/20 backdrop-blur-sm'
+                    : 'text-gray-500 bg-gray-100 border-gray-200'
+                }`}>
                   +{startup.tags_list.length - (screenSize.isMobile ? 2 : 3)}
                 </span>
               )}
@@ -366,19 +410,29 @@ const Startups = () => {
         )}
         
         {/* Action Bar - responsive design */}
-        <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-gray-100 mt-auto">
+        <div className={`flex items-center justify-between pt-2 sm:pt-3 border-t mt-auto ${
+          startup.cover_image_display_url
+            ? 'border-white/20'
+            : 'border-gray-100'
+        }`}>
           <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className="flex items-center space-x-1 text-xs sm:text-sm text-gray-500">
-              <Heart className={`w-3 h-3 sm:w-4 sm:h-4 ${startup.is_liked ? 'text-red-500 fill-current' : 'text-gray-400'}`} />
+            <div className={`flex items-center space-x-1 text-xs sm:text-sm ${
+              startup.cover_image_display_url ? 'text-white/80' : 'text-gray-500'
+            }`}>
+              <Heart className={`w-3 h-3 sm:w-4 sm:h-4 ${startup.is_liked ? 'text-red-500 fill-current' : startup.cover_image_display_url ? 'text-white/60' : 'text-gray-400'}`} />
               <span className="font-medium">{startup.total_likes || 0}</span>
             </div>
-            <div className="flex items-center space-x-1 text-xs sm:text-sm text-gray-500">
-              <Bookmark className={`w-3 h-3 sm:w-4 sm:h-4 ${startup.is_bookmarked ? 'text-blue-500' : 'text-gray-400'}`} />
+            <div className={`flex items-center space-x-1 text-xs sm:text-sm ${
+              startup.cover_image_display_url ? 'text-white/80' : 'text-gray-500'
+            }`}>
+              <Bookmark className={`w-3 h-3 sm:w-4 sm:h-4 ${startup.is_bookmarked ? 'text-blue-400' : startup.cover_image_display_url ? 'text-white/60' : 'text-gray-400'}`} />
               <span className="font-medium">{startup.total_bookmarks || 0}</span>
             </div>
           </div>
 
-          <div className="flex items-center text-xs text-gray-500 font-medium">
+          <div className={`flex items-center text-xs font-medium ${
+            startup.cover_image_display_url ? 'text-white/80' : 'text-gray-500'
+          }`}>
             <span className="hidden sm:inline">View Details</span>
             <span className="sm:hidden">View</span>
             <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 ml-1" />

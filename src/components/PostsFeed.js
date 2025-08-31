@@ -3269,13 +3269,6 @@ export default function PostFeed({
                           : "Be the first to share something with the community!"
                         }
                       </p>
-                      <div className="text-sm text-gray-400 bg-gray-50 p-3 rounded">
-                        <p><strong>Debug Info:</strong></p>
-                        <p>Feed Type: {feedType}</p>
-                        <p>Sort Filter: {filter}</p>
-                        <p>Topic: {selectedTopic || 'All'}</p>
-                        <p>Check browser console (F12) for API details</p>
-                      </div>
                     </div>
                   </div>
                 )}

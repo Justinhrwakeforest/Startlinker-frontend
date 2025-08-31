@@ -645,6 +645,33 @@ const ChatWindow = ({ conversation, onSendMessage, onNewMessage, loading, isMobi
                     }
                 });
 
+                const unsubscribeReadReceipt = webSocketService.onReadReceipt((data) => {
+                    console.log('Received read receipt:', data);
+                    // Update message read status in real-time
+                    if (data.message_id && data.user_id) {
+                        setMessages(prev => prev.map(msg => {
+                            if (msg.id === data.message_id) {
+                                const currentReadBy = msg.read_receipts || [];
+                                const alreadyRead = currentReadBy.some(receipt => receipt.user_id === data.user_id);
+                                
+                                if (!alreadyRead) {
+                                    return {
+                                        ...msg,
+                                        read_receipts: [
+                                            ...currentReadBy,
+                                            {
+                                                user_id: data.user_id,
+                                                read_at: data.read_at
+                                            }
+                                        ]
+                                    };
+                                }
+                            }
+                            return msg;
+                        }));
+                    }
+                });
+
                 const unsubscribeStatus = webSocketService.onUserStatus((data) => {
                     setConnectionStatus(webSocketService.getConnectionState());
                 });
@@ -655,6 +682,7 @@ const ChatWindow = ({ conversation, onSendMessage, onNewMessage, loading, isMobi
                 return () => {
                     unsubscribeMessage();
                     unsubscribeTyping();
+                    unsubscribeReadReceipt();
                     unsubscribeStatus();
                     webSocketService.disconnect();
                 };
@@ -682,6 +710,18 @@ const ChatWindow = ({ conversation, onSendMessage, onNewMessage, loading, isMobi
             window.removeEventListener('focus', handleVisibilityChange);
         };
     }, [conversation?.id]);
+
+    // Auto-mark messages as read when they load in view
+    useEffect(() => {
+        if (conversation?.id && messages.length > 0 && currentUser?.id) {
+            // Automatically mark all visible messages as read after a short delay
+            const timer = setTimeout(() => {
+                markConversationAsRead();
+            }, 500);
+
+            return () => clearTimeout(timer);
+        }
+    }, [conversation?.id, messages.length, currentUser?.id]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -946,12 +986,38 @@ const ChatWindow = ({ conversation, onSendMessage, onNewMessage, loading, isMobi
         if (!conversation?.id) return;
         
         try {
-            await api.post('/api/messaging/mark-read/', {
+            console.log('Marking conversation as read:', conversation.id);
+            const response = await api.post('/api/messaging/mark-read/', {
                 conversation_id: conversation.id
             });
+            console.log('Mark as read response:', response.data);
             
-            // Trigger unread count refresh
-            window.dispatchEvent(new CustomEvent('unreadCountChanged'));
+            // Send WebSocket notifications for all unread messages if connected
+            if (webSocketService.isConnected()) {
+                const unreadMessages = messages.filter(msg => 
+                    msg.sender?.id !== currentUser?.id && 
+                    (!msg.read_receipts || !msg.read_receipts.some(receipt => receipt.user_id === currentUser?.id))
+                );
+                
+                // Send read receipt for each unread message via WebSocket
+                unreadMessages.forEach(msg => {
+                    webSocketService.markAsRead(msg.id);
+                });
+            }
+            
+            // Update local state for all messages to show as read
+            setMessages(prev => prev.map(msg => ({
+                ...msg,
+                is_read: msg.sender?.id === currentUser?.id || true,
+                read_receipts: msg.read_receipts || []
+            })));
+            
+            // Trigger unread count refresh across the app
+            // Use a slight delay to ensure backend has processed the request
+            setTimeout(() => {
+                window.dispatchEvent(new CustomEvent('unreadCountChanged'));
+                window.dispatchEvent(new CustomEvent('conversationsRefresh'));
+            }, 200);
         } catch (error) {
             console.error('Error marking conversation as read:', error);
         }
