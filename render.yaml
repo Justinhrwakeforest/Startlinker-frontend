@@ -2,11 +2,17 @@ services:
   - type: web
     name: startlinker-frontend
     env: node
+    region: oregon
     plan: free
-    buildCommand: npm ci && npm run build
-    startCommand: npm run start:prod
+    buildCommand: npm install --legacy-peer-deps && npm run build
+    startCommand: node server.js
+    healthCheckPath: /health
     envVars:
       - key: NODE_VERSION
-        value: "18"
+        value: 20.17.0
       - key: REACT_APP_API_URL
         value: https://startlinker-backend.onrender.com
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000

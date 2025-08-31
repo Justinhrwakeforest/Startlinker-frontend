@@ -126,7 +126,7 @@ const ProtectedRoute = ({ children }) => {
     return <LoadingScreen />;
   }
   
-  return isAuthenticated ? children : <Navigate to="/auth" />;
+  return isAuthenticated ? children : <Navigate to="/welcome" />;
 };
 
 // Admin Route Component
@@ -219,6 +219,12 @@ const AppRoutes = () => {
           <Route 
             path="/auth" 
             element={!isAuthenticated ? <Auth /> : <Navigate to="/" />} 
+          />
+          
+          {/* Redirect /login to /auth for compatibility */}
+          <Route 
+            path="/login" 
+            element={<Navigate to="/auth" replace />} 
           />
           
           {/* Password reset routes (no navbar/footer) */}
