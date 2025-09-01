@@ -114,9 +114,6 @@ const JobUploadForm = ({ isOpen, onClose, onSuccess }) => {
   };
 
   const resetForm = () => {
-    // Get user email from context or localStorage if available
-    const userEmail = localStorage.getItem('userEmail') || '';
-    
     setFormData({
       title: '',
       description: '',
@@ -131,7 +128,7 @@ const JobUploadForm = ({ isOpen, onClose, onSuccess }) => {
       benefits: '',
       application_deadline: '',
       expires_at: '',
-      company_email: userEmail,
+      company_email: '', // Now optional, don't pre-fill
       skills: []
     });
     setErrors({});
@@ -214,10 +211,11 @@ const JobUploadForm = ({ isOpen, onClose, onSuccess }) => {
         newErrors.job_type = 'Please select a job type';
       }
 
-      if (!formData.company_email || !formData.company_email.trim()) {
-        newErrors.company_email = 'Company email is required';
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.company_email.trim())) {
-        newErrors.company_email = 'Please enter a valid email address';
+      // Company email is now optional
+      if (formData.company_email && formData.company_email.trim()) {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.company_email.trim())) {
+          newErrors.company_email = 'Please enter a valid email address';
+        }
       }
     } else if (step === 2) {
       // Additional Details - validate dates (now required)
@@ -278,9 +276,7 @@ const JobUploadForm = ({ isOpen, onClose, onSuccess }) => {
       if (!formData.job_type) {
         newErrors.job_type = 'Job type is required';
       }
-      if (!formData.company_email || !formData.company_email.trim()) {
-        newErrors.company_email = 'Company email is required';
-      }
+      // Company email is optional, no validation needed
     }
 
     setErrors(newErrors);
@@ -337,8 +333,11 @@ const JobUploadForm = ({ isOpen, onClose, onSuccess }) => {
         throw new Error(`Invalid job type selected: ${formData.job_type}`);
       }
       
-      if (!formData.company_email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.company_email)) {
-        throw new Error('Valid company email is required');
+      // Company email is optional, validate only if provided
+      if (formData.company_email && formData.company_email.trim()) {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.company_email)) {
+          throw new Error('Please provide a valid email address');
+        }
       }
 
       // Prepare the payload for your Django backend
@@ -355,7 +354,7 @@ const JobUploadForm = ({ isOpen, onClose, onSuccess }) => {
         benefits: formData.benefits ? formData.benefits.trim().substring(0, 2000) : '',
         application_deadline: formData.application_deadline || null,
         expires_at: formData.expires_at || null,
-        company_email: formData.company_email.trim().toLowerCase(),
+        company_email: formData.company_email ? formData.company_email.trim().toLowerCase() : '',
         skills: Array.isArray(formData.skills) ? formData.skills.slice(0, 20) : [], // Limit skills
         status: 'pending' // Ensure job requires admin approval
       };
@@ -722,7 +721,7 @@ const JobUploadForm = ({ isOpen, onClose, onSuccess }) => {
                   {/* Company Email */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Company Email *
+                      Company Email (Optional)
                     </label>
                     <input
                       type="email"
@@ -741,7 +740,7 @@ const JobUploadForm = ({ isOpen, onClose, onSuccess }) => {
                       </div>
                     )}
                     <p className="mt-1 text-xs text-gray-500">
-                      This email will be used for applicant communication
+                      Optional - Provide an email for applicant communication
                     </p>
                   </div>
 
@@ -1082,8 +1081,8 @@ const JobUploadForm = ({ isOpen, onClose, onSuccess }) => {
                         <div className="text-sm text-gray-600">
                           <p className="flex items-center gap-2">
                             <Mail size={14} />
-                            {formData.company_email}
-                            <span className="text-xs text-orange-600">(Will be verified by admin)</span>
+                            {formData.company_email || 'No email provided'}
+                            {formData.company_email && <span className="text-xs text-orange-600">(Will be verified by admin)</span>}
                           </p>
                         </div>
                       </div>
