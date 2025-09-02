@@ -277,11 +277,6 @@ const Startups = () => {
         {/* Header - responsive layout */}
         <div className="flex items-start justify-between mb-2 sm:mb-3">
           <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
-            {!startup.cover_image_display_url && startup.logo && (
-              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg sm:rounded-xl shadow-sm flex items-center justify-center text-white text-lg sm:text-xl font-bold">
-                {startup.logo}
-              </div>
-            )}
             <div className="flex-1 min-w-0">
               <div className="flex items-center space-x-1 sm:space-x-2 mb-1">
                 <h3 className={`text-sm sm:text-lg font-bold transition-colors line-clamp-1 ${

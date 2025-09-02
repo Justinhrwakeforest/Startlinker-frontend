@@ -423,16 +423,6 @@ export default function StartupDetail() {
                 <div className="absolute inset-x-0 bottom-0 p-4 sm:p-8">
                   <div className="flex items-end justify-between">
                     <div className="flex items-center space-x-3 sm:space-x-4 flex-1">
-                      {startup.logo && (
-                        <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-xl sm:rounded-2xl shadow-lg border-2 sm:border-4 border-white flex items-center justify-center text-2xl sm:text-3xl font-bold relative">
-                          {startup.logo}
-                          {startup.is_featured && (
-                            <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-5 h-5 sm:w-6 sm:h-6 bg-amber-500 rounded-full flex items-center justify-center">
-                              <Award className="w-2 h-2 sm:w-3 sm:h-3 text-white" />
-                            </div>
-                          )}
-                        </div>
-                      )}
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 mb-2">
                           <h1 className="text-xl sm:text-3xl font-bold text-white drop-shadow-lg truncate">{startup.name}</h1>
@@ -466,13 +456,12 @@ export default function StartupDetail() {
                             </div>
                           )}
                         </div>
-                        <p className="text-white/95 text-sm sm:text-lg leading-relaxed drop-shadow max-w-full break-all overflow-hidden text-ellipsis"
+                        <p className="text-white/95 text-sm sm:text-lg leading-relaxed drop-shadow max-w-full overflow-hidden text-ellipsis"
                            style={{
                              display: '-webkit-box',
-                             WebkitLineClamp: 2,
+                             WebkitLineClamp: 1,
                              WebkitBoxOrient: 'vertical',
-                             wordBreak: 'break-all',
-                             overflowWrap: 'anywhere'
+                             overflow: 'hidden'
                            }}>
                           {startup.description}
                         </p>
@@ -489,16 +478,6 @@ export default function StartupDetail() {
                 <div className="absolute inset-x-0 bottom-0 p-4 sm:p-8">
                   <div className="flex items-end justify-between">
                     <div className="flex items-center space-x-3 sm:space-x-4 flex-1">
-                      {startup.logo && (
-                        <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-xl sm:rounded-2xl shadow-lg border-2 sm:border-4 border-white flex items-center justify-center text-2xl sm:text-3xl font-bold relative">
-                          {startup.logo}
-                          {startup.is_featured && (
-                            <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-5 h-5 sm:w-6 sm:h-6 bg-amber-500 rounded-full flex items-center justify-center">
-                              <Award className="w-2 h-2 sm:w-3 sm:h-3 text-white" />
-                            </div>
-                          )}
-                        </div>
-                      )}
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 mb-2">
                           <h1 className="text-xl sm:text-3xl font-bold text-white drop-shadow-lg truncate">{startup.name}</h1>
@@ -532,7 +511,7 @@ export default function StartupDetail() {
                             </div>
                           )}
                         </div>
-                        <p className="text-white/95 text-sm sm:text-lg leading-relaxed drop-shadow max-w-4xl line-clamp-3 sm:line-clamp-none">{startup.description}</p>
+                        <p className="text-white/95 text-sm sm:text-lg leading-relaxed drop-shadow max-w-4xl line-clamp-1">{startup.description}</p>
                       </div>
                     </div>
                   </div>

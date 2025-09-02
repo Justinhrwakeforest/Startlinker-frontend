@@ -108,7 +108,6 @@ const StartupEditForm = () => {
         industry: startupData.industry || '',
         location: startupData.location || '',
         website: startupData.website || '',
-        logo: startupData.logo || '🚀',
         funding_amount: startupData.funding_amount || '',
         valuation: startupData.valuation || '',
         employee_count: startupData.employee_count || '',
@@ -439,7 +438,6 @@ const StartupEditForm = () => {
         location: formData.location.trim(),
         employee_count: parseInt(formData.employee_count),
         founded_year: parseInt(formData.founded_year),
-        logo: formData.logo || '🚀',
         is_featured: formData.is_featured || false
       };
 
@@ -701,26 +699,6 @@ const StartupEditForm = () => {
                 )}
               </div>
 
-              {/* Logo */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Logo Emoji
-                </label>
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-lg flex items-center justify-center text-xl sm:text-2xl">
-                    {formData.logo}
-                  </div>
-                  <input
-                    type="text"
-                    name="logo"
-                    value={formData.logo}
-                    onChange={handleInputChange}
-                    className="flex-1 px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base text-gray-900"
-                    placeholder="🚀"
-                    maxLength={10}
-                  />
-                </div>
-              </div>
 
               {/* Industry */}
               <div>
