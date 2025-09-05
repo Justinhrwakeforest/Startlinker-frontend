@@ -1,6 +1,7 @@
 {
   "short_name": "StartLinker",
-  "name": "StartLinker - Innovation Ecosystem",
+  "name": "StartLinker - Connect, Collaborate, and Grow Your Startup",
+  "description": "StartLinker helps visionaries, coders, and marketers connect to launch startups together. Discover job opportunities, find co-founders, and build the future of business.",
   "icons": [
     {
       "src": "favicon.ico",

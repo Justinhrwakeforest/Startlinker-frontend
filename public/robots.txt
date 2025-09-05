@@ -1,3 +1,17 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+
+# Disallow private areas
+Disallow: /admin/
+Disallow: /api/
+
+# Important pages for crawling
+Sitemap: https://startlinker.com/sitemap.xml
+
+# Popular startup and job pages
+Allow: /jobs
+Allow: /startups
+Allow: /about
+Allow: /privacy
+Allow: /terms
