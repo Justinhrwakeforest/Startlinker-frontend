@@ -39,6 +39,41 @@
     
     <!-- Tailwind CSS CDN - This gives us all the styling we need! -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "StartLinker",
+      "url": "https://startlinker.com",
+      "logo": "https://startlinker.com/logo512.png",
+      "description": "StartLinker helps visionaries, coders, and marketers connect to launch startups together. Discover job opportunities, find co-founders, and build the future of business.",
+      "sameAs": [
+        "https://twitter.com/startlinker",
+        "https://linkedin.com/company/startlinker"
+      ],
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://startlinker.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    
+    <!-- Website Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "StartLinker",
+      "url": "https://startlinker.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://startlinker.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
