@@ -74,6 +74,16 @@ const JobDetailPage = () => {
     }
   };
 
+  const handleApply = () => {
+    if (job.job_link) {
+      // Open external application link in new tab
+      window.open(job.job_link, '_blank', 'noopener,noreferrer');
+    } else {
+      // Show internal application modal
+      setShowApplicationModal(true);
+    }
+  };
+
   const canEditJob = () => {
     if (!user || !job) return false;
     
@@ -330,9 +340,10 @@ const JobDetailPage = () => {
               
               {job.status === 'active' && !job.has_applied ? (
                 <button
-                  onClick={() => setShowApplicationModal(true)}
-                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-medium"
+                  onClick={handleApply}
+                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-medium flex items-center gap-2"
                 >
+                  {job.job_link && <ExternalLink size={16} />}
                   Apply Now
                 </button>
               ) : job.has_applied ? (
@@ -365,9 +376,10 @@ const JobDetailPage = () => {
               
               {job.status === 'active' && !job.has_applied ? (
                 <button
-                  onClick={() => setShowApplicationModal(true)}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-medium"
+                  onClick={handleApply}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-medium flex items-center justify-center gap-2"
                 >
+                  {job.job_link && <ExternalLink size={16} />}
                   Apply Now
                 </button>
               ) : job.has_applied ? (
@@ -698,23 +710,45 @@ const JobDetailPage = () => {
             </div>
 
             {/* Contact Information - Always Visible */}
-            {job.company_email && (
+            {(job.company_email || job.job_link) && (
               <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <Mail className="text-purple-600" size={20} />
                   <h3 className="text-lg font-semibold text-gray-900">Contact Information</h3>
                 </div>
                 <div className="space-y-3">
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                    <Mail size={16} className="text-gray-600" />
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-900">Company Email</p>
-                      <p className="text-sm text-gray-600 break-all">{job.company_email}</p>
-                      <p className={`text-xs mt-1 ${job.is_verified ? 'text-green-600' : 'text-orange-600'}`}>
-                        {job.is_verified ? '✓ Verified with company domain' : '⚠ Pending verification'}
-                      </p>
+                  {job.company_email && (
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <Mail size={16} className="text-gray-600" />
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900">Company Email</p>
+                        <p className="text-sm text-gray-600 break-all">{job.company_email}</p>
+                        <p className={`text-xs mt-1 ${job.is_verified ? 'text-green-600' : 'text-orange-600'}`}>
+                          {job.is_verified ? '✓ Verified with company domain' : '⚠ Pending verification'}
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  )}
+                  {job.job_link && (
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <ExternalLink size={16} className="text-gray-600" />
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900">Application Link</p>
+                        <a 
+                          href={job.job_link} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-sm text-blue-600 hover:text-blue-800 hover:underline break-all inline-flex items-center gap-1"
+                        >
+                          {job.job_link}
+                          <ExternalLink size={12} />
+                        </a>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Click to apply on the company's website
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

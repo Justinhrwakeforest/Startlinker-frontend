@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, X, Plus, AlertCircle, CheckCircle, Clock, Building, Calendar, Mail } from 'lucide-react';
+import { ArrowLeft, Save, X, Plus, AlertCircle, CheckCircle, Clock, Building, Calendar, Mail, ExternalLink } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 
@@ -22,6 +22,7 @@ const JobEditForm = ({ onClose, onSuccess }) => {
     benefits: '',
     application_deadline: '',
     expires_at: '',
+    job_link: '',
     skills: []
   });
 
@@ -112,6 +113,7 @@ const JobEditForm = ({ onClose, onSuccess }) => {
         benefits: jobData.benefits || '',
         application_deadline: jobData.application_deadline ? jobData.application_deadline.split('T')[0] : '',
         expires_at: jobData.expires_at ? jobData.expires_at.split('T')[0] : '',
+        job_link: jobData.job_link || '',
         skills: jobData.skills || []
       });
       
@@ -446,6 +448,25 @@ const JobEditForm = ({ onClose, onSuccess }) => {
                         placeholder="e.g. $80,000 - $120,000"
                       />
                     </div>
+                  </div>
+
+                  {/* Job Application Link */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <ExternalLink className="w-4 h-4 inline-block mr-1" />
+                      Application Link (Optional)
+                    </label>
+                    <input
+                      type="url"
+                      name="job_link"
+                      value={formData.job_link}
+                      onChange={handleInputChange}
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base text-gray-900"
+                      placeholder="https://careers.company.com/job/123"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">
+                      External link where applicants can apply directly
+                    </p>
                   </div>
 
                   {/* Description */}

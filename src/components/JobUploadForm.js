@@ -19,6 +19,7 @@ const JobUploadForm = ({ isOpen, onClose, onSuccess }) => {
     application_deadline: '',
     expires_at: '',
     company_email: '',
+    job_link: '',
     skills: []
   });
 
@@ -129,6 +130,7 @@ const JobUploadForm = ({ isOpen, onClose, onSuccess }) => {
       application_deadline: '',
       expires_at: '',
       company_email: '', // Now optional, don't pre-fill
+      job_link: '',
       skills: []
     });
     setErrors({});
@@ -215,6 +217,14 @@ const JobUploadForm = ({ isOpen, onClose, onSuccess }) => {
       if (formData.company_email && formData.company_email.trim()) {
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.company_email.trim())) {
           newErrors.company_email = 'Please enter a valid email address';
+        }
+      }
+      // Job link validation (optional)
+      if (formData.job_link && formData.job_link.trim()) {
+        try {
+          new URL(formData.job_link.trim());
+        } catch (e) {
+          newErrors.job_link = 'Please enter a valid URL';
         }
       }
     } else if (step === 2) {
@@ -355,6 +365,7 @@ const JobUploadForm = ({ isOpen, onClose, onSuccess }) => {
         application_deadline: formData.application_deadline || null,
         expires_at: formData.expires_at || null,
         company_email: formData.company_email ? formData.company_email.trim().toLowerCase() : '',
+        job_link: formData.job_link ? formData.job_link.trim() : '',
         skills: Array.isArray(formData.skills) ? formData.skills.slice(0, 20) : [], // Limit skills
         status: 'pending' // Ensure job requires admin approval
       };
@@ -744,6 +755,33 @@ const JobUploadForm = ({ isOpen, onClose, onSuccess }) => {
                     </p>
                   </div>
 
+                  {/* Job Application Link */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <ExternalLink className="w-4 h-4 inline-block mr-1" />
+                      Application Link (Optional)
+                    </label>
+                    <input
+                      type="url"
+                      name="job_link"
+                      value={formData.job_link}
+                      onChange={handleInputChange}
+                      className={`w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base text-gray-900 ${
+                        errors.job_link ? 'border-red-300' : 'border-gray-300'
+                      }`}
+                      placeholder="https://careers.company.com/job/123"
+                    />
+                    {errors.job_link && (
+                      <div className="mt-1 flex items-center text-sm text-red-600">
+                        <AlertCircle className="w-4 h-4 mr-1" />
+                        {errors.job_link}
+                      </div>
+                    )}
+                    <p className="mt-1 text-xs text-gray-500">
+                      Optional - External link where applicants can apply directly
+                    </p>
+                  </div>
+
                   {/* Job Description */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1078,12 +1116,20 @@ const JobUploadForm = ({ isOpen, onClose, onSuccess }) => {
                       {/* Contact Information */}
                       <div>
                         <h6 className="font-medium text-gray-900 mb-2">Contact Information</h6>
-                        <div className="text-sm text-gray-600">
+                        <div className="text-sm text-gray-600 space-y-1">
                           <p className="flex items-center gap-2">
                             <Mail size={14} />
                             {formData.company_email || 'No email provided'}
                             {formData.company_email && <span className="text-xs text-orange-600">(Will be verified by admin)</span>}
                           </p>
+                          {formData.job_link && (
+                            <p className="flex items-center gap-2">
+                              <ExternalLink size={14} />
+                              <a href={formData.job_link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                                {formData.job_link}
+                              </a>
+                            </p>
+                          )}
                         </div>
                       </div>
 
